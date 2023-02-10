@@ -33,6 +33,9 @@ vous basée sur l'utilisation des listes chaînées
 ## Aides
 
 ```bash
+# Cloner le dépôt
+git clone https://github.com/josiashod/u_agenda.git
+
 # Création d'une branche
 git checkout -b <nom-branche>
 
@@ -57,4 +60,16 @@ git checkout
 
 # Revenir à un commit en arrière
 git reset --hard HEAD~1
+```
+
+## Utiliation du fichier makefile
+```bash
+# Compilation
+make
+
+# Exécution des tests
+make test
+
+# Suppression des fichiers
+make clean
 ```
