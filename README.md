@@ -40,7 +40,7 @@ git checkout -b <nom-branche>
 git checkout <nom-branche>
 
 # Poussez une nouvelle branch sur le dépôt
-git push  --set-upstream origin <nom-branche>
+git push --set-upstream origin <nom-branche>
 
 # Faire un commit des modifications
 git commit -m "Details des modifications effectué"
