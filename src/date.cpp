@@ -11,17 +11,17 @@ date::date(unsigned int jour, unsigned int mois, unsigned int annee):
 date::~date()
 {}
 
-unsigned int date::d_jour const
+unsigned int date::jour() const
 {
     return d_jour;
 }
 
-unsigned int date::d_mois const
+unsigned int date::mois() const
 {
     return d_mois;
 }
 
-unsigned int date::d_annee const
+unsigned int date::annee() const
 {
     return d_annee;
 }
@@ -41,7 +41,7 @@ void date::setAnnee(unsigned int annee)
     d_annee = annee;
 }
 
-void lireDate(std::istream& ist)
+void date::lireDate(std::istream& ist)
 {
     char c;
     ist >> d_jour >> c >> d_mois >> c >> d_annee;
@@ -87,12 +87,12 @@ bool date::estMemeJourQue(const date& date) const
     return (d_annee == date.d_annee && d_mois == date.d_mois && d_jour == date.d_jour);
 }
 
-bool operator==(const date& date) const
+bool date::operator==(const date& date) const
 {
     return estMemeJourQue(date);
 }
 
-bool operator>(const date& date) const
+bool date::operator>(const date& date) const
 {
     return estAvant(date);
 }

@@ -2,34 +2,33 @@
 #define __HEURE_H__
 
 #include <iostream>
-using namespace std;
-
 
 class heure
 {
     public:
         heure();
-        heure(int heure, int minute);
+        heure(unsigned int heure, unsigned int minute);
         virtual ~heure();
-        int h() const;
-        int mn() const;
-        void seth(int h);
-        void setmn(int mn);
+        unsigned int h() const;
+        unsigned int mn() const;
+        void seth(unsigned int h);
+        void setmn(unsigned int mn);
 
-        void afficheHeure(ostream& ost) const;
-        friend ostream& operator<<(ostream& ost, const heure& h);
-        void lireHeure(istream& ist);
-        friend istream& operator>>(istream& ist, heure& h);
+        void afficheHeure(std::ostream& ost) const;
+        friend std::ostream& operator<<(std::ostream& ost, const heure& h);
+        void lireHeure(std::istream& ist);
+        friend std::istream& operator>>(std::istream& ist, heure& h);
 
         bool estAvant(const heure& heure) const;
-        bool estMemeHeureQue(const heure& heure)const;
+        bool estMemeHeureQue(const heure& heure) const;
         bool estEntre(const heure& debut, const heure& fin) const;
         friend bool overlapHorraires(const heure& debut1, const heure& fin1, const heure& debut2, const heure& fin2);
 
     protected:
 
     private:
-        int d_h, d_mn;
+        unsigned int d_h;
+        unsigned int d_mn;
 };
 
 #endif // HEURE_H

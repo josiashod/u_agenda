@@ -8,47 +8,47 @@ heure::heure(unsigned int heure, unsigned int minute): d_h{heure}, d_mn{minute}
 heure::~heure()
 {}
 
-unsigned int heure::d_h const
+unsigned int heure::h() const
 {
     return d_h;
 }
 
-unsigned int heure::d_mn const
+unsigned int heure::mn() const
 {
     return d_mn;
 }
 
-void seth(unsigned int h)
+void heure::seth(unsigned int h)
 {
     d_h = h;
 }
 
-void setmn(unsigned int mn)
+void heure::setmn(unsigned int mn)
 {
     d_mn = mn;
 }
 
-void heure::afficheheure(ostream& ost) const
+void heure::afficheHeure(std::ostream& ost) const
 {
     ost << d_h << "h" << d_mn;
 
 }
 
-ostream& operator<<(ostream& ost, const heure& h)
+std::ostream& operator<<(std::ostream& ost, const heure& h)
 {
-    h.afficheheure(ost);;
+    h.afficheHeure(ost);;
     return ost;
 }
 
-void heure::lireheure(istream& ist)
+void heure::lireHeure(std::istream& ist)
 {
     char c;
     ist >> d_h >> c >> d_mn;
 }
 
-istream& operator>>(istream& ist, heure& h)
+std::istream& operator>>(std::istream& ist, heure& h)
 {
-    h.lireheure(ist);
+    h.lireHeure(ist);
     return ist;
 }
 
@@ -63,7 +63,7 @@ bool heure::estAvant(const heure& heure) const
     return true;
 }
 
-bool heure::estMemeheureQue(const heure& heure) const
+bool heure::estMemeHeureQue(const heure& heure) const
 {
     return (d_h == heure.d_h && d_mn == heure.d_mn);
 }
