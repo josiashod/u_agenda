@@ -16,11 +16,14 @@ int main(int argc, char **argv)
 		{"", NULL}
 	};
 
-    while (tests[i].func != NULL && strcmp(tests[i].test.c_str(), argv[1]))
-		i++;
+    if (argc > 1)
+    {
+        while (tests[i].func != NULL && strcmp(tests[i].test.c_str(), argv[1]))
+            i++;
 
-    if (tests[i].test != "")
-        tests[i].func();
+        if (tests[i].test != "")
+            tests[i].func();
+    }
 
     exit(0);
 }
