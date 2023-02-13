@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstring>
 #include "main.h"
 
 void test1()
@@ -18,7 +17,7 @@ int main(int argc, char **argv)
 
     if (argc > 1)
     {
-        while (tests[i].func != NULL && strcmp(tests[i].test.c_str(), argv[1]))
+        while (tests[i].func != NULL && tests[i].test.compare(argv[1]))
             i++;
 
         if (tests[i].test != "")
