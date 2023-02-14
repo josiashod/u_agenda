@@ -1,2 +1,4 @@
 uagenda
 *.o
+main.cpp
+tests.bats
