@@ -60,13 +60,25 @@ void test_update_numero()
 }
 
 /**
- * @brief test_affiche_personne - Test mise à jour numero
+ * @brief test_affiche_personne - Test affiche personne
  */
 void test_affiche_personne()
 {
     personne p{"DOH", "John", "0606060606", "john.doe@gmail.com"};
 
-    p.affiche(std::cout);
+    p.affiche();
+    exit(OK);
+}
+
+/**
+ * @brief test_lire_personne - Test lire personne
+ */
+void test_lire_personne()
+{
+    personne p{};
+
+    p.lire();
+    p.affiche();
     exit(OK);
 }
 
@@ -121,6 +133,7 @@ int main(int argc, char **argv)
 		{"test_update_mail", test_update_mail},
 		{"test_update_numero", test_update_numero},
 		{"test_affiche_personne", test_affiche_personne},
+		{"test_lire_personne", test_lire_personne},
 		{"test_mauvais_numero", test_mauvais_numero},
 		{"test_mauvais_email", test_mauvais_email},
 		{"test_update_avec_mauvais_email", test_update_avec_mauvais_email},

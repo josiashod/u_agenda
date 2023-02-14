@@ -122,6 +122,19 @@ void personne::affiche(std::ostream& ost) const
     ost << '{' + d_nom + ", " + d_prenom + ", " + d_email + ", " + d_numero + '}' << std::endl;
 }
 
+void personne::lire(std::istream &ist)
+{
+    char c;
+    std::string test;
+
+    ist >> c >> d_nom >> d_prenom >> d_email >> d_numero;
+
+    d_nom = d_nom.substr(0, d_nom.length() - 1);
+    d_prenom = d_prenom.substr(0, d_prenom.length() - 1);
+    d_email = d_email.substr(0, d_email.length() - 1);
+    d_numero = d_numero.substr(0, d_numero.length() - 1);
+}
+
 bool personne::operator==(const personne& p) const
 {
     return (nomComplet().compare(p.nomComplet()) == 0);
@@ -130,4 +143,16 @@ bool personne::operator==(const personne& p) const
 bool personne::operator>(const personne& p) const
 {
     return vientAvant(p);
+}
+
+std::istream& operator>>(std::istream& ist, personne& p)
+{
+    p.lire(ist);
+    return ist;
+}
+
+std::ostream& operator<<(std::ostream& ost, const personne& p)
+{
+    p.affiche(ost);
+    return ost;
 }

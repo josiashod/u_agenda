@@ -37,11 +37,13 @@ class personne
         std::string nomComplet() const;
         bool contient(std::string& str) const;
         bool vientAvant(const personne& p) const;
-        void affiche(std::ostream& ost) const;
-        void lire(std::istream& ist);
+        void affiche(std::ostream& ost = std::cout) const;
+        void lire(std::istream& ist = std::cin);
 
         bool operator==(const personne& p) const;
         bool operator>(const personne& p) const;
+        friend std::istream& operator>>(std::istream& ist, personne& p);
+        friend std::ostream& operator<<(std::ostream& ost, const personne& p);
 
         friend class LPersonne;
     private:

@@ -1,4 +1,5 @@
 prog=uagenda
+folder=test_files
 
 # Normal usage
 
@@ -50,7 +51,8 @@ prog=uagenda
     [ "$status" -eq 2 ]
 }
 
-@test "Modification du numero avec un mauvais" {
-    run ./$prog test_update_avec_mauvais_numero
-    [ "$status" -eq 2 ]
+@test "Lire personne" {
+    run ./$prog test_lire_personne < "$folder/test_lire_personne.txt"
+    [ "$status" -eq 0 ]
+    [ "${lines[0]}" = "{DOH, John, john.doe@gmail.com, 0606060606}" ]
 }
