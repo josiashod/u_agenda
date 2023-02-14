@@ -39,6 +39,8 @@ class personne
         bool vientAvant(const personne& p) const;
         void affiche(std::ostream& ost = std::cout) const;
         void lire(std::istream& ist = std::cin);
+        void exporter(std::ostream& ost) const;
+        void importer(std::istream& ist);
 
         bool operator==(const personne& p) const;
         bool operator>(const personne& p) const;

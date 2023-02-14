@@ -1,1 +1,1 @@
-{DOH, John, john.doe@gmail.com, 0606060606}
+{DOH, John, 0606060606, john.doe@gmail.com}

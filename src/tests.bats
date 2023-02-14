@@ -33,7 +33,7 @@ folder=test_files
 @test "Affiche personne" {
     run ./$prog test_affiche_personne
     [ "$status" -eq 0 ]
-    [ "${lines[0]}" = "{DOH, John, john.doe@gmail.com, 0606060606}" ]
+    [ "${lines[0]}" = "{DOH, John, 0606060606, john.doe@gmail.com}" ]
 }
 
 @test "Création d'une personne avec mauvais numero" {
@@ -54,5 +54,5 @@ folder=test_files
 @test "Lire personne" {
     run ./$prog test_lire_personne < "$folder/test_lire_personne.txt"
     [ "$status" -eq 0 ]
-    [ "${lines[0]}" = "{DOH, John, john.doe@gmail.com, 0606060606}" ]
+    [ "${lines[0]}" = "{DOH, John, 0606060606, john.doe@gmail.com}" ]
 }

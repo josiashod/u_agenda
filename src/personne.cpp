@@ -119,7 +119,7 @@ bool personne::vientAvant(const personne& p) const
 
 void personne::affiche(std::ostream& ost) const
 {
-    ost << '{' + d_nom + ", " + d_prenom + ", " + d_email + ", " + d_numero + '}' << std::endl;
+    ost << '{' + d_nom + ", " + d_prenom + ", " + d_numero + ", " + d_email + '}' << std::endl;
 }
 
 void personne::lire(std::istream &ist)
@@ -134,6 +134,52 @@ void personne::lire(std::istream &ist)
     d_email = d_email.substr(0, d_email.length() - 1);
     d_numero = d_numero.substr(0, d_numero.length() - 1);
 }
+
+void personne::exporter(std::ostream& ost) const
+{
+    ost << "BEGIN:VCARD" << std::endl;
+    ost << "VERSION:2.1" << std::endl;
+    ost << "N:" << d_nom + ";" + d_prenom + ";;;" << std::endl;
+    ost << "FN:" << nomComplet() << std::endl;
+    ost << "TEL;TYPE=CELL:" << d_numero << std::endl;
+    ost << "EMAIL:" << d_email << std::endl;
+    ost << "END:VCARD" << std::endl;
+}
+
+void personne::importer(std::istream& ist)
+{
+    std::string ligne;
+    std::size_t pos;
+
+    ist >> ligne;
+    while(!ist.eof() || ligne != "END:VCARD")
+    {
+        // On recupere le nom et le prenom
+        if (ligne.substr(0, 2) == "N:")
+        {
+            pos = ligne.find(";");
+            d_nom = ligne.substr(2, pos - 2);
+            ligne = ligne.substr(pos + 1, ligne.length());
+            d_prenom = ligne.substr(0, ligne.find(";"));
+        }
+        // On recupere le numero de telephone
+        else if (ligne.substr(0, 3) == "TEL")
+        {
+            pos = ligne.find(":");
+            d_numero = ligne.substr(pos + 1);
+        }
+
+        // On recupere le numero de telephone
+        else if (ligne.substr(0, 5) == "EMAIL")
+        {
+            d_email = ligne.substr(6);
+        }
+
+        ist >> ligne;
+    }
+
+}
+
 
 bool personne::operator==(const personne& p) const
 {

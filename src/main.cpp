@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "error.h"
 #include "personne.h"
 
@@ -124,6 +125,31 @@ void test_update_avec_mauvais_numero()
     exit(p.status());
 }
 
+/**
+ * @brief test_export_personne - Exportation d'une personne
+ */
+void test_export_personne()
+{
+    personne p{"DOH", "John", "0606060606", "john.doe@gmail.com"};
+
+    p.exporter(std::cout);
+    exit(OK);
+}
+
+/**
+ * @brief test_import_personne - Importation d'une personne
+ */
+void test_import_personne()
+{
+    personne p{};
+
+    std::ifstream is("import.vcf");
+    p.importer(is);
+    p.affiche();
+    exit(OK);
+}
+
+
 int main(int argc, char **argv)
 {
     unsigned int i = 0;
@@ -138,6 +164,7 @@ int main(int argc, char **argv)
 		{"test_mauvais_email", test_mauvais_email},
 		{"test_update_avec_mauvais_email", test_update_avec_mauvais_email},
 		{"test_update_avec_mauvais_numero", test_update_avec_mauvais_numero},
+		{"test_export_personne", test_export_personne},
 		{"", NULL}
 	};
 
@@ -150,5 +177,6 @@ int main(int argc, char **argv)
             tests[i].func();
     }
 
+    test_import_personne();
     exit(0);
 }
