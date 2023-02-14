@@ -169,7 +169,7 @@ void personne::importer(std::istream& ist)
             d_numero = ligne.substr(pos + 1);
         }
 
-        // On recupere le numero de telephone
+        // On recupere le mail
         else if (ligne.substr(0, 5) == "EMAIL")
         {
             d_email = ligne.substr(6);
