@@ -20,9 +20,6 @@ personne::personne(std::string nom
         d_status = ERR_WITH_VALUE;
 }
 
-personne::~personne()
-{}
-
 // ACCESSEURS & MUTATEURS
 std::string personne::nom() const
 {

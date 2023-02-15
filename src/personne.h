@@ -16,7 +16,6 @@ class personne
         , std::string numero
         , std::string email
         );
-        virtual ~personne();
 
         // ACCESSEURS & MUTATEURS
         std::string nom() const;
