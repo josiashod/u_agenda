@@ -104,8 +104,8 @@ bool personne::testNumero(const std::string numero)
 
 std::string personne::nomComplet() const
 {
-    return (((d_prenom.length() > 0) ? d_prenom + " " : "")
-    + ((d_nom.length() > 0) ? d_nom : ""));
+    return (((d_nom.length() > 0) ? d_nom + " " : "")
+    + ((d_prenom.length() > 0) ? d_prenom : ""));
 }
 
 bool personne::contient(std::string& str) const
