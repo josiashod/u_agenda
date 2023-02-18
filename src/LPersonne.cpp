@@ -75,7 +75,6 @@ int LPersonne::ajouter(std::string nom, std::string prenom
             d_tete = p;
         else
             crt->d_prec->d_suiv = p;
-
         p->d_prec = crt->d_prec;
         p->d_suiv = crt;
         crt->d_prec = p;
@@ -89,8 +88,6 @@ void LPersonne::ajouter(personne*& p)
     if (!p)
         return;
 
-    personne *crt = d_tete;
-
     d_taille++;
 
     if(!d_tete)
@@ -100,7 +97,7 @@ void LPersonne::ajouter(personne*& p)
         return;
     }
 
-
+    personne *crt = d_tete;
     while(crt && (*crt > *p))
         crt = crt->d_suiv;
 
