@@ -112,13 +112,13 @@ void LPersonne::ajouter(personne*& p)
     }
     else
     {
-        crt->d_prec->d_suiv = p;
+        if (crt == d_tete)
+            d_tete = p;
+        else
+            crt->d_prec->d_suiv = p;
         p->d_prec = crt->d_prec;
         p->d_suiv = crt;
         crt->d_prec = p;
-
-        if (crt == d_tete)
-            d_tete = p;
     }
 }
 
