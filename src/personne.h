@@ -16,6 +16,7 @@ class personne
         , std::string numero
         , std::string email
         );
+        personne(const personne& p);
 
         // ACCESSEURS & MUTATEURS
         std::string nom() const;
@@ -26,7 +27,6 @@ class personne
         void setNumero(std::string numero);
         std::string email() const;
         void setEmail(std::string email);
-        void setSuivant(personne* suivant);
         personne* suivant() const;
         personne* precedent() const;
         unsigned int status() const;
