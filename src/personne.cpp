@@ -9,17 +9,17 @@ personne::personne(std::string nom
 , std::string prenom
 , std::string numero
 , std::string email
-): d_nom{nom}, d_prenom{prenom}
+): d_nom{nom}
+, d_prenom{prenom}
 , d_numero{numero}
 , d_email{email}
+, d_suiv{nullptr}
+, d_prec{nullptr}
 , d_status{OK}
 {
     if (!personne::testEmail(d_email) || !personne::testNumero(d_numero))
         d_status = ERR_WITH_VALUE;
 }
-
-personne::~personne()
-{}
 
 // ACCESSEURS & MUTATEURS
 std::string personne::nom() const
@@ -72,9 +72,18 @@ void personne::setEmail(std::string email)
         d_status = ERR_WITH_VALUE;
 }
 
-personne* personne::suiv() const
+void personne::setSuivant(personne* suivant){
+    this->d_suiv = suivant;
+}
+
+personne* personne::suivant() const
 {
     return d_suiv;
+}
+
+personne* personne::precedent() const
+{
+    return d_prec;
 }
 
 unsigned int personne::status() const
