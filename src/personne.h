@@ -16,7 +16,7 @@ class personne
         , std::string numero
         , std::string email
         );
-        virtual ~personne();
+        personne(const personne& p);
 
         // ACCESSEURS & MUTATEURS
         std::string nom() const;
@@ -27,7 +27,8 @@ class personne
         void setNumero(std::string numero);
         std::string email() const;
         void setEmail(std::string email);
-        personne* suiv() const;
+        personne* suivant() const;
+        personne* precedent() const;
         unsigned int status() const;
 
         // METHODES
@@ -54,6 +55,7 @@ class personne
         std::string d_numero;
         std::string d_email;
         personne* d_suiv;
+        personne* d_prec;
         unsigned int d_status;
 };
 

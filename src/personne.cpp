@@ -12,13 +12,21 @@ personne::personne(std::string nom
 ): d_nom{nom}, d_prenom{prenom}
 , d_numero{numero}
 , d_email{email}
+, d_suiv{nullptr}
+, d_prec{nullptr}
 , d_status{OK}
 {
     if (!personne::testEmail(d_email) || !personne::testNumero(d_numero))
         d_status = ERR_WITH_VALUE;
 }
 
-personne::~personne()
+personne::personne(const personne& p): d_nom{p.d_nom}
+, d_prenom{p.d_prenom}
+, d_numero{p.d_numero}
+, d_email{p.d_email}
+, d_suiv{nullptr}
+, d_prec{nullptr}
+, d_status{OK}
 {}
 
 // ACCESSEURS & MUTATEURS
@@ -72,9 +80,14 @@ void personne::setEmail(std::string email)
         d_status = ERR_WITH_VALUE;
 }
 
-personne* personne::suiv() const
+personne* personne::suivant() const
 {
     return d_suiv;
+}
+
+personne* personne::precedent() const
+{
+    return d_prec;
 }
 
 unsigned int personne::status() const
@@ -100,8 +113,8 @@ bool personne::testNumero(const std::string numero)
 
 std::string personne::nomComplet() const
 {
-    return (((d_prenom.length() > 0) ? d_prenom + " " : "")
-    + ((d_nom.length() > 0) ? d_nom : ""));
+    return (((d_nom.length() > 0) ? d_nom + " " : "")
+    + ((d_prenom.length() > 0) ? d_prenom : ""));
 }
 
 bool personne::contient(std::string& str) const
