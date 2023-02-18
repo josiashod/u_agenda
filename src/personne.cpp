@@ -20,6 +20,15 @@ personne::personne(std::string nom
         d_status = ERR_WITH_VALUE;
 }
 
+personne::personne(const personne& p): d_nom{p.d_nom}
+, d_prenom{p.d_prenom}
+, d_numero{p.d_numero}
+, d_email{p.d_email}
+, d_suiv{nullptr}
+, d_prec{nullptr}
+, d_status{OK}
+{}
+
 // ACCESSEURS & MUTATEURS
 std::string personne::nom() const
 {

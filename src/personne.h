@@ -16,6 +16,7 @@ class personne
         , std::string numero
         , std::string email
         );
+        personne(const personne& p);
 
         // ACCESSEURS & MUTATEURS
         std::string nom() const;
