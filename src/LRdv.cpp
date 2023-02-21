@@ -1,24 +1,25 @@
 #include "LRDv.h"
 
-LRdv::LRdv(): d_tete{nullptr}, d_queue{nullptr}, d_suivant{nullptr} {}
+LRdv::LRdv(): d_tete{nullptr}
+{}
 
 LRdv::~LRdv()
 {
-    rdv* rdv1 = d_tete;
-    while(rdv1){
-        rdv* rdvsuivant = rdv1->d_suivant;
-        delete rdv1;
-        rdv1 = rdvsuivant;
+    rdv* as = d_tete;
+
+    while(as){
+        d_tete = as->d_suivant;
+        delete as;
+        as = d_tete;
     }
 }
 
 rdv* LRdv::tete() const { return d_tete; }
 
-rdv* LRdv::queue() const { return d_queue; }
-
 void LRdv::supprimer(std::string nom)
 {
     rdv* r1 = d_tete, *precr1= nullptr;
+
     while(r1 !== nullptr && nom != r1->nom){
 			precr1 = r1;
 			r1 = r1->d_suiv;
@@ -32,11 +33,9 @@ void LRdv::supprimer(std::string nom)
 		delete r1->d_suiv;
 		r1->d_suiv=nullptr;
 	}
-		r1 = precr1->d_suiv;
-		precr1->d_suiv; = r1->d_suiv;
-		delete r1;
-		
-	
+	r1 = precr1->d_suiv;
+	precr1->d_suiv; = r1->d_suiv;
+	delete r1;
 }
 
 rdv* recherche(std::string nom) const
