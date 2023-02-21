@@ -10,5 +10,6 @@ class UAgenda : public QWidget
 public:
     UAgenda(QWidget *parent = nullptr);
     ~UAgenda();
+    void creerInterface();
 };
 #endif // UAGENDA_H
