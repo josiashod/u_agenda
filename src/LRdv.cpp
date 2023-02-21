@@ -1,4 +1,6 @@
-#include "LRDv.h"
+#include "LRdv.h"
+#include "date.h"
+#include "heure.h"
 
 LRdv::LRdv(): d_tete{nullptr}
 {}
@@ -18,34 +20,32 @@ rdv* LRdv::tete() const { return d_tete; }
 
 void LRdv::supprimer(std::string nom)
 {
-    rdv* r1 = d_tete, *precr1= nullptr;
+    rdv *crt = d_tete;
 
-    while(r1 !== nullptr && nom != r1->nom){
-			precr1 = r1;
-			r1 = r1->d_suiv;
+	if(crt->d_nom == nom){
+		d_tete = crt->d_suiv;
+		delete crt;	
 	}
-	if(r1 == d_tete){
-		d_tete = r1->d_suiv;
-		delete r1;
-		r1 = nullptr;		
+
+    while(crt->d_suiv && nom != crt->d_suiv->d_nom)
+		crt = crt->d_suiv;
+
+	if (crt)
+	{
+		rdv *as = crt->d_suiv;
+		crt->d_suiv = as->d_suiv;
+		delete as;
 	}
-	if (r1->d_suiv = nullptr){
-		delete r1->d_suiv;
-		r1->d_suiv=nullptr;
-	}
-	r1 = precr1->d_suiv;
-	precr1->d_suiv; = r1->d_suiv;
-	delete r1;
 }
 
 rdv* recherche(std::string nom) const
 {
-	rdv *rv = d_tete;
-	while(rv != nullptr && nom != rv->nom){
-		rv=rv->d_suiv;
+	rdv *crt = d_tete;
+	while(crt != nullptr && nom != crt->nom){
+		crt=crt->d_suiv;
 	}
-	if(!rv){
+	if(!crt)
 		return;
-	}
-	return rv;
+
+	return crt;
 }
