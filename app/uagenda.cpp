@@ -26,6 +26,8 @@ UAgenda::~UAgenda()
 void UAgenda::creerInterface()
 {
     setWindowTitle("UAGENDA");
+    setMinimumSize(1650, 830);
+
     auto main{new QVBoxLayout(this)};
 
     // HEADER CONFIGURATON
@@ -91,13 +93,24 @@ void UAgenda::creerInterface()
     auto calendrier{new QVBoxLayout()};
     d_grille = new QGridLayout();
 
+    auto vligne {new QFrame{}};
+    vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
+
     calendrier->addLayout(d_grille, 1);
+
     content->addLayout(sidebar, 0);
     content->addSpacing(10);
+    content->addWidget(vligne, 0, Qt::AlignRight);
     content->addLayout(calendrier, 1);
 
+    main->addSpacing(13);
     main->addLayout(header, 0);
-    main->addSpacing(30);
+    auto hligne {new QFrame{}};
+    hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+
+    main->addSpacing(13);
+    main->addWidget(hligne, 0);
+    //main->addSpacing(30);
     main->addLayout(content, 1);
 }
 
@@ -153,7 +166,7 @@ void UAgenda::afficheCalendrier()
         auto hligne {new QFrame{}};
         hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
 
-        d_grille->addWidget(vligne, row, col - 1, Qt::AlignLeft);
+        d_grille->addWidget(vligne, row, col - 1, Qt::AlignRight);
         d_grille->addWidget(label, row, col - 1, Qt::AlignTop|Qt::AlignCenter);
         d_grille->addWidget(hligne, row, col - 1, Qt::AlignBottom);
         if (col == 7)
