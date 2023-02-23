@@ -1,4 +1,5 @@
-#include "uagenda.h"
+﻿#include "uagenda.h"
+#include "contactdialog.h"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -9,6 +10,7 @@
 #include <QCalendarWidget>
 #include <QTextCursor>
 #include <QFrame>
+#include <QMenu>
 
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
@@ -21,6 +23,9 @@ UAgenda::UAgenda(QWidget *parent)
 
 UAgenda::~UAgenda()
 {
+    delete d_grille;
+    delete d_etiquetteDate;
+    delete d_calendrierWidget;
 }
 
 void UAgenda::creerInterface()
@@ -51,6 +56,9 @@ void UAgenda::creerInterface()
     searchbar->addWidget(search_button, 0);
     searchbar->setSpacing(0);
 
+    d_etiquetteDate = new QLabel{""};
+    navbar->addWidget(d_etiquetteDate, 0);
+    navbar->addSpacing(100);
     navbar->addWidget(today_button, 0, Qt::AlignRight);
     navbar->addWidget(prev_button, 0, Qt::AlignRight);
     navbar->addWidget(next_button, 0, Qt::AlignRight);
@@ -60,8 +68,6 @@ void UAgenda::creerInterface()
     connect(prev_button, &QPushButton::clicked, this, &UAgenda::onPrevMonth);
     connect(next_button, &QPushButton::clicked, this, &UAgenda::onNextMonth);
 
-    d_etiquetteDate = new QLabel{""};
-    navbar->addWidget(d_etiquetteDate, 0, Qt::AlignRight);
     navbar->setSpacing(12);
     navbar->insertStretch( 0, -1 );
 
@@ -70,25 +76,35 @@ void UAgenda::creerInterface()
 
 
     // SIDEBAR
-    auto create_button{new QPushButton(tr("+ Créer"))};
+    auto create_button{new QPushButton(tr("+ Ajouter"))};
+    auto menu{ new QMenu()};
+    menu->addAction("Ajouter un rendez-vous");
+    menu->addAction("Ajouter un contact");
+    //menu->setMinimumSize( create_button->width(), menu->height() );
+    create_button->setMenu(menu);
+
     d_calendrierWidget = new QCalendarWidget();
     d_calendrierWidget->setGridVisible(true);
-    auto search_contact{new QHBoxLayout()};
-    auto search_contact_in{new QLineEdit()};
-    auto search_contact_button{new QPushButton(tr("chercher"))};
+//    auto search_contact{new QHBoxLayout()};
+//    auto search_contact_in{new QLineEdit()};
+    auto contact_button{new QPushButton(tr("Mes contacts"))};
 
-    search_contact_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
-    search_contact_in->setPlaceholderText("Rechercher un contact");
-    search_contact->addWidget(search_contact_in, 1);
-    search_contact->addWidget(search_contact_button, 0);
-    search_contact->setSpacing(0);
+    contactDialog = new ContactDialog(this);
+    connect(contact_button, &QPushButton::clicked, this, &UAgenda::onAfficheContact);
+
+//    search_contact_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
+//    search_contact_in->setPlaceholderText("Rechercher un contact");
+//    search_contact->addWidget(search_contact_in, 1);
+//    search_contact->addWidget(contact_button, 0);
+//    search_contact->setSpacing(0);
 
     sidebar->addWidget(create_button, 0, Qt::AlignTop);
-    sidebar->addWidget(d_calendrierWidget, 0, Qt::AlignTop);
-    sidebar->addLayout(search_contact, 1);
+    sidebar->addWidget(d_calendrierWidget, 1);
+    sidebar->addWidget(contact_button, 1);
     sidebar->setSpacing(20);
-    sidebar->insertStretch(-1, 1 );
-    connect(d_calendrierWidget, &QCalendarWidget::clicked, this, &UAgenda::onChangeDate);
+    sidebar->insertStretch(-1, 1);
+
+    connect(d_calendrierWidget, &QCalendarWidget::currentPageChanged, this, &UAgenda::onCalendrierChange);
 
     auto calendrier{new QVBoxLayout()};
     d_grille = new QGridLayout();
@@ -157,9 +173,11 @@ void UAgenda::afficheCalendrier()
 
     while(date.isValid())
     {
+//        #308CC6
         int col = date.dayOfWeek();
-        auto label{new QLabel(QString::number(date.day()))};
-        label->setStyleSheet("QLabel { font-weight: bold; }");
+        auto button{new QPushButton(QString::number(date.day()))};
+        button->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
+            "width: 100%;}");
 
         auto vligne {new QFrame{}};
         vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
@@ -167,7 +185,7 @@ void UAgenda::afficheCalendrier()
         hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
 
         d_grille->addWidget(vligne, row, col - 1, Qt::AlignRight);
-        d_grille->addWidget(label, row, col - 1, Qt::AlignTop|Qt::AlignCenter);
+        d_grille->addWidget(button, row, col - 1, Qt::AlignTop);
         d_grille->addWidget(hligne, row, col - 1, Qt::AlignBottom);
         if (col == 7)
         {
@@ -177,17 +195,6 @@ void UAgenda::afficheCalendrier()
         ++actual_day;
         date.setDate(d_currentDate.year(), d_currentDate.month(), actual_day);
     }
-}
-
-void UAgenda::onChangeDate(QDate date)
-{
-    bool rafraichir{date.month() != d_currentDate.month()};
-
-    d_currentDate = date;
-    afficheDate();
-
-    if (rafraichir)
-        afficheCalendrier();
 }
 
 void UAgenda::onReinitDate()
@@ -220,4 +227,16 @@ void UAgenda::onPrevMonth()
     d_calendrierWidget->setCurrentPage(d_currentDate.year(), d_currentDate.month());
     afficheDate();
     afficheCalendrier();
+}
+
+void UAgenda::onCalendrierChange(int year, int month)
+{
+    d_currentDate = QDate{year, month, 1};
+    afficheDate();
+    afficheCalendrier();
+}
+
+void UAgenda::onAfficheContact()
+{
+    contactDialog->show();
 }

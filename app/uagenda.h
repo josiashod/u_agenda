@@ -9,6 +9,7 @@ class QGridLayout;
 class QLabel;
 class QComboBox;
 class QCalendarWidget;
+class ContactDialog;
 
 class UAgenda : public QWidget
 {
@@ -23,10 +24,11 @@ public:
     void rafraichirGrille();
 
 public slots:
-    void onChangeDate(QDate date);
     void onReinitDate();
     void onNextMonth();
     void onPrevMonth();
+    void onCalendrierChange(int year, int month);
+    void onAfficheContact();
 
 
 private:
@@ -34,5 +36,6 @@ private:
     QGridLayout *d_grille;
     QCalendarWidget *d_calendrierWidget;
     QLabel *d_etiquetteDate;
+    ContactDialog *contactDialog;
 };
 #endif // UAGENDA_H
