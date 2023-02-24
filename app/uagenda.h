@@ -9,7 +9,7 @@ class QGridLayout;
 class QLabel;
 class QComboBox;
 class QCalendarWidget;
-class ContactDialog;
+// class ContactDialog;
 
 class UAgenda : public QWidget
 {
@@ -36,6 +36,6 @@ private:
     QGridLayout *d_grille;
     QCalendarWidget *d_calendrierWidget;
     QLabel *d_etiquetteDate;
-    ContactDialog *contactDialog;
+//    ContactDialog *contactDialog;
 };
 #endif // UAGENDA_H

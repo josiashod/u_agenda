@@ -1,0 +1,45 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/eye.svg</file>
+        <file>icons/pencil-square.svg</file>
+        <file>icons/trash.svg</file>
+        <file>icons/export.svg</file>
+        <file>icons/import.svg</file>
+        <file>icons/caret-left.svg</file>
+        <file>icons/caret-right.svg</file>
+        <file>icons/search.svg</file>
+        <file>icons/people.svg</file>
+        <file>icons/plus.svg</file>
+        <file>logo/1.png</file>
+        <file>logo/2.png</file>
+        <file>logo/3.png</file>
+        <file>logo/4.png</file>
+        <file>logo/5.png</file>
+        <file>logo/6.png</file>
+        <file>logo/7.png</file>
+        <file>logo/8.png</file>
+        <file>logo/9.png</file>
+        <file>logo/10.png</file>
+        <file>logo/11.png</file>
+        <file>logo/12.png</file>
+        <file>logo/13.png</file>
+        <file>logo/14.png</file>
+        <file>logo/15.png</file>
+        <file>logo/16.png</file>
+        <file>logo/17.png</file>
+        <file>logo/18.png</file>
+        <file>logo/19.png</file>
+        <file>logo/20.png</file>
+        <file>logo/21.png</file>
+        <file>logo/22.png</file>
+        <file>logo/23.png</file>
+        <file>logo/24.png</file>
+        <file>logo/25.png</file>
+        <file>logo/26.png</file>
+        <file>logo/27.png</file>
+        <file>logo/28.png</file>
+        <file>logo/29.png</file>
+        <file>logo/30.png</file>
+        <file>logo/31.png</file>
+    </qresource>
+</RCC>
