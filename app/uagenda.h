@@ -32,6 +32,8 @@ public slots:
     void onAfficheContact();
     void onRechercheRdv();
     void onAfficheRdvsJour();
+    void onExportRdv();
+
 
 
 private:

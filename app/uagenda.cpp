@@ -14,6 +14,9 @@
 #include <QMenu>
 #include <QFontDatabase>
 #include <QApplication>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QStandardPaths>
 
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
@@ -60,7 +63,8 @@ void UAgenda::creerInterface()
     auto today_button{new QPushButton(tr("Aujourd'hui"))};
     auto prev_button{new QPushButton(QIcon(":/icons/caret-left.svg"), "")};
     auto next_button{new QPushButton(QIcon(":/icons/caret-right.svg"), "")};
-    auto export_button{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter l'agenda"))};
+    auto export_button{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
+    export_button->setToolTip(tr("Exporter l'agenda"));
 
     search_button->setStyleSheet("QPushButton { padding: 4px; }");
     search_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
@@ -69,6 +73,7 @@ void UAgenda::creerInterface()
     searchbar->addWidget(search_button, 0);
     searchbar->setSpacing(0);
 
+    connect(export_button, &QPushButton::clicked, this, &UAgenda::onExportRdv);
     connect(search_button, &QPushButton::clicked, this, &UAgenda::onRechercheRdv);
 
     d_etiquetteDate = new QLabel{""};
@@ -274,4 +279,32 @@ void UAgenda::onAfficheRdvsJour()
 
     rdvDialog->setModal(true);
     rdvDialog->show();
+}
+
+void UAgenda::onExportRdv()
+{
+    QString directory = QDir::homePath();
+    QLocale locale = QLocale();
+
+    directory += "/" + QStandardPaths::displayName(QStandardPaths::DocumentsLocation) + "/";
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+            tr("Sauvegarde de l'agenda"),
+            directory + "UAGENDA_" + locale.toString(QDate::currentDate(), "dd-MM-yyyy") + ".ics",
+            tr("iCalendar files(*.ics *ifb *.iCal *.icalendar)"));
+
+    if (fileName.isEmpty())
+            return;
+    else
+    {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, tr("Impossible d'ouvrir le fichier"),
+                file.errorString());
+            return;
+        }
+//        QDataStream out(&file);
+//            out.setVersion(QDataStream::Qt_4_5);
+//            out << contacts;
+    }
 }
