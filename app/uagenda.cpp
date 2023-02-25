@@ -66,11 +66,11 @@ void UAgenda::creerInterface()
     auto export_button{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
     export_button->setToolTip(tr("Exporter l'agenda"));
 
-    search_button->setStyleSheet("QPushButton { padding: 4px; }");
+    search_button->setStyleSheet("QPushButton { padding: 4.5px 3px; }");
     search_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
     search_in->setPlaceholderText("Chercher un évènement");
     searchbar->addWidget(search_in, 1);
-    searchbar->addWidget(search_button, 0);
+    searchbar->addWidget(search_button, 0, Qt::AlignCenter);
     searchbar->setSpacing(0);
 
     connect(export_button, &QPushButton::clicked, this, &UAgenda::onExportRdv);
