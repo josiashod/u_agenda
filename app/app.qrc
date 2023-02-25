@@ -41,5 +41,8 @@
         <file>logo/29.png</file>
         <file>logo/30.png</file>
         <file>logo/31.png</file>
+        <file>fonts/BarlowCondensed-Light.ttf</file>
+        <file>fonts/BarlowCondensed-Medium.ttf</file>
+        <file>fonts/BarlowCondensed-Regular.ttf</file>
     </qresource>
 </RCC>

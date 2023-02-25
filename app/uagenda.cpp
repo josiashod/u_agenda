@@ -1,4 +1,5 @@
-﻿#include "uagenda.h"
+#include "uagenda.h"
+#include "rdvdialog.h"
 #include "contactdialog.h"
 
 #include <QGridLayout>
@@ -11,6 +12,8 @@
 #include <QTextCursor>
 #include <QFrame>
 #include <QMenu>
+#include <QFontDatabase>
+#include <QApplication>
 
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
@@ -28,34 +31,45 @@ UAgenda::~UAgenda()
     delete d_calendrierWidget;
 }
 
+void UAgenda::setPolice()
+{
+
+    // Mise en place de la police
+    int id = QFontDatabase::addApplicationFont(":/fonts/BarlowCondensed-Regular.ttf");
+    QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+    auto barlowCondensed{QFont(family)};
+//    barlowCondensed.setPixelSize(15);
+
+    QApplication::setFont(barlowCondensed);
+}
+
 void UAgenda::creerInterface()
 {
     setWindowTitle("UAGENDA");
     setWindowIcon(QIcon(":/logo/"+ QString::number(d_currentDate.day()) +".png"));
     setMinimumSize(1650, 830);
+    setPolice();
 
     auto main{new QVBoxLayout(this)};
 
     // HEADER CONFIGURATON
     auto header{new QHBoxLayout()};
-    //header->addWidget(new QLabel("UAGENDA"), 0);
-
-    // NAVBAR
-    //auto navbar{new QHBoxLayout()};
     auto searchbar{new QHBoxLayout()};
     auto search_in{new QLineEdit()};
     auto search_button{new QPushButton(QIcon(":/icons/search.svg"), "")};
     auto today_button{new QPushButton(tr("Aujourd'hui"))};
     auto prev_button{new QPushButton(QIcon(":/icons/caret-left.svg"), "")};
     auto next_button{new QPushButton(QIcon(":/icons/caret-right.svg"), "")};
+    auto export_button{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter l'agenda"))};
 
-    //header->addLayout(navbar, 2);
-
+    search_button->setStyleSheet("QPushButton { padding: 4px; }");
     search_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
     search_in->setPlaceholderText("Chercher un évènement");
     searchbar->addWidget(search_in, 1);
     searchbar->addWidget(search_button, 0);
     searchbar->setSpacing(0);
+
+    connect(search_button, &QPushButton::clicked, this, &UAgenda::onRechercheRdv);
 
     d_etiquetteDate = new QLabel{""};
     header->addWidget(d_etiquetteDate, 1);
@@ -64,13 +78,12 @@ void UAgenda::creerInterface()
     header->addWidget(prev_button, 0, Qt::AlignRight);
     header->addWidget(next_button, 0, Qt::AlignRight);
     header->addLayout(searchbar, 1);
+    header->addWidget(export_button, 0, Qt::AlignRight);
 
     connect(today_button, &QPushButton::clicked, this, &UAgenda::onReinitDate);
     connect(prev_button, &QPushButton::clicked, this, &UAgenda::onPrevMonth);
     connect(next_button, &QPushButton::clicked, this, &UAgenda::onNextMonth);
 
-    //navbar->setSpacing(12);
-    //navbar->insertStretch( 0, -1 );
 
     auto content{new QHBoxLayout()};
     auto sidebar{new QVBoxLayout()};
@@ -86,17 +99,9 @@ void UAgenda::creerInterface()
 
     d_calendrierWidget = new QCalendarWidget();
     d_calendrierWidget->setGridVisible(true);
-//    auto search_contact{new QHBoxLayout()};
-//    auto search_contact_in{new QLineEdit()};
     auto contact_button{new QPushButton(QIcon(":/icons/people.svg"), tr("Mes contacts"))};
 
     connect(contact_button, &QPushButton::clicked, this, &UAgenda::onAfficheContact);
-
-//    search_contact_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
-//    search_contact_in->setPlaceholderText("Rechercher un contact");
-//    search_contact->addWidget(search_contact_in, 1);
-//    search_contact->addWidget(contact_button, 0);
-//    search_contact->setSpacing(0);
 
     sidebar->addWidget(create_button, 0, Qt::AlignTop);
     sidebar->addWidget(d_calendrierWidget, 1);
@@ -114,10 +119,10 @@ void UAgenda::creerInterface()
 
     calendrier->addLayout(d_grille, 1);
 
-    content->addLayout(sidebar, 0);
+    content->addLayout(sidebar, 1);
     content->addSpacing(10);
     content->addWidget(vligne, 0, Qt::AlignRight);
-    content->addLayout(calendrier, 1);
+    content->addLayout(calendrier, 3);
 
     main->addSpacing(13);
     main->addLayout(header, 0);
@@ -126,7 +131,6 @@ void UAgenda::creerInterface()
 
     main->addSpacing(13);
     main->addWidget(hligne, 0);
-    //main->addSpacing(30);
     main->addLayout(content, 1);
 }
 
@@ -178,6 +182,8 @@ void UAgenda::afficheCalendrier()
         auto button{new QPushButton(QString::number(date.day()))};
         button->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
             "width: 100%;}");
+
+        connect(button, &QPushButton::clicked, this, &UAgenda::onAfficheRdvsJour);
 
         auto vligne {new QFrame{}};
         vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
@@ -242,4 +248,30 @@ void UAgenda::onAfficheContact()
 
     contactDialog->setModal(true);
     contactDialog->show();
+}
+
+void UAgenda::onRechercheRdv()
+{
+    auto rdvDialog{new RdvDialog(this, "Resultat de \"Test\"")};
+
+    rdvDialog->setModal(true);
+    rdvDialog->show();
+}
+
+void UAgenda::onAfficheRdvsJour()
+{
+    auto button{(QPushButton*)sender()};
+    QString titre = "Rendez-vous du ";
+    int jour = (button->text()).toInt();
+    int mois = d_currentDate.month();
+    int annee = d_currentDate.year();
+
+    titre += ((jour < 10) ? "0" : "") + QString::number(jour) + "/";
+    titre += ((mois < 10) ? "0" : "") + QString::number(mois) + "/";
+    titre += QString::number(annee);
+
+    auto rdvDialog{new RdvDialog(this, titre)};
+
+    rdvDialog->setModal(true);
+    rdvDialog->show();
 }

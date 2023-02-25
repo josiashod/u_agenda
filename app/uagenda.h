@@ -1,4 +1,4 @@
-#ifndef UAGENDA_H
+    #ifndef UAGENDA_H
 #define UAGENDA_H
 
 #include <QWidget>
@@ -19,6 +19,7 @@ public:
     UAgenda(QWidget *parent = nullptr);
     ~UAgenda();
     void creerInterface();
+    void setPolice();
     void afficheDate();
     void afficheCalendrier();
     void rafraichirGrille();
@@ -29,6 +30,8 @@ public slots:
     void onPrevMonth();
     void onCalendrierChange(int year, int month);
     void onAfficheContact();
+    void onRechercheRdv();
+    void onAfficheRdvsJour();
 
 
 private:

@@ -11,10 +11,12 @@ CONFIG += c++17
 SOURCES += \
     contactdialog.cpp \
     main.cpp \
+    rdvdialog.cpp \
     uagenda.cpp
 
 HEADERS += \
     contactdialog.h \
+    rdvdialog.h \
     uagenda.h
 
 # Default rules for deployment.

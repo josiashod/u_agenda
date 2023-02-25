@@ -32,7 +32,7 @@ void Contact::creerInterface()
     email->setStyleSheet("QLabel {font-weight: 12; font-size: 14px}");*/
 
     auto numero{new QLabel(d_numero)};
-    numero->setStyleSheet("QLabel {font-weight: 12; font-size: 14px}");
+    numero->setStyleSheet("QLabel {font-weight: 4; font-size: 13px}");
 
     info->addWidget(new QLabel(d_nomComplet), 0);
     info->addWidget(numero, 0);
@@ -41,13 +41,13 @@ void Contact::creerInterface()
     ligne->addLayout(info, 1);
 
     auto btnAffiche{new QPushButton(QIcon(":/icons/eye.svg"), "")};
-//    btnAffiche->setFlat(true);
+    btnAffiche->setAutoDefault(false);
 
     auto btnModifier{new QPushButton(QIcon(":/icons/pencil-square.svg"), "")};
-//    btnModifier->setFlat(true);
+    btnModifier->setAutoDefault(false);
 
     auto btnSupprimer{new QPushButton(QIcon(":/icons/trash.svg"), "")};
-//    btnSupprimer->setFlat(true);
+    btnSupprimer->setAutoDefault(false);
 
     ligne->addWidget(btnAffiche, 0, Qt::AlignRight|Qt::AlignCenter);
     ligne->addWidget(btnModifier, 0, Qt::AlignRight|Qt::AlignCenter);
@@ -81,6 +81,9 @@ void ContactDialog::creerInterface()
     auto btnImporter{new QPushButton(QIcon(":/icons/import.svg"), tr("Importer"))};
     auto btnExporter{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
 
+    btnImporter->setAutoDefault(false);
+    btnExporter->setAutoDefault(false);
+
     header->addWidget(titre, 1, Qt::AlignLeft);
     header->addWidget(btnImporter, 0, Qt::AlignRight);
     header->addWidget(btnExporter, 0, Qt::AlignRight);
@@ -95,7 +98,7 @@ void ContactDialog::creerInterface()
     main->addWidget(d_recherche, 0, Qt::AlignTop);
     main->addWidget(contacts, 55);
 
-    for(int i = 0; i < 40; i++)
+    for(int i = 0; i < 10; i++)
     {
         auto item{new QListWidgetItem()};
         item->setSizeHint(QSize(0, 60));
