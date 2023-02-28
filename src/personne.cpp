@@ -132,13 +132,13 @@ bool personne::vientAvant(const personne& p) const
 
 void personne::affiche(std::ostream& ost) const
 {
-    ost << '{' + d_nom + ", " + d_prenom + ", " + d_numero + ", " + d_email + '}' << std::endl;
+    ost << '{' + d_nom + ", " + d_prenom + ", "
+    + d_numero + ", " + d_email + '}' << std::endl;
 }
 
 void personne::lire(std::istream &ist)
 {
     char c;
-    std::string test;
 
     ist >> c >> d_nom >> d_prenom >> d_email >> d_numero;
 

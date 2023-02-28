@@ -323,12 +323,12 @@ bool LPersonne::operator==(const LPersonne& lp) const
     return true;
 }
 
-friend std::istream& operator>>(std::istream& ist, LPersonne& lp)
+std::istream& operator>>(std::istream& ist, LPersonne& lp)
 {
     lp.load(ist);
     return ist;
 }
-friend std::ostream& operator<<(std::ostream& ost, const LPersonne& lp)
+std::ostream& operator<<(std::ostream& ost, const LPersonne& lp)
 {
     lp.save(ost);
     return ost;

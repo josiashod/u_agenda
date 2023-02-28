@@ -18,9 +18,9 @@ class date
         void setMois(unsigned int mois);
         void setJour(unsigned int jour);
 
-        void lireDate(std::istream& ist);
+        void lire(std::istream& ist);
         friend std::istream& operator>>(std::istream& ist, date& d);
-        void afficheDate(std::ostream& ost) const;
+        void affiche(std::ostream& ost) const;
         friend std::ostream& operator<<(std::ostream& ost, const date& d);
 
         bool estAvant(const date& date) const;
