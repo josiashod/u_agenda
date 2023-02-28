@@ -14,15 +14,16 @@ class heure
         void seth(unsigned int h);
         void setmn(unsigned int mn);
 
-        void afficheHeure(std::ostream& ost) const;
+        void affiche(std::ostream& ost) const;
         friend std::ostream& operator<<(std::ostream& ost, const heure& h);
-        void lireHeure(std::istream& ist);
+        void lire(std::istream& ist);
         friend std::istream& operator>>(std::istream& ist, heure& h);
 
-        bool estAvant(const heure& heure) const;
-        bool estMemeHeureQue(const heure& heure) const;
+        bool estAvant(const heure& h) const;
+        bool estMemeHeureQue(const heure& h) const;
         bool estEntre(const heure& debut, const heure& fin) const;
-        friend bool overlapHorraires(const heure& debut1, const heure& fin1, const heure& debut2, const heure& fin2);
+        bool operator==(const heure& h) const;
+        bool operator>(const heure& h) const;
 
     protected:
 
