@@ -2,9 +2,8 @@
 #define __RDV_H__
 
 #include <string>
-#include <iostream>
 #include <array>
-#include "LPersonne.h"
+#include "lpersonne.h"
 #include "date.h"
 #include "heure.h"
 
@@ -15,9 +14,11 @@ class rdv
         // CONSTRUCTEURS + DESTRUCTEUR
         rdv();
         rdv(std::string nom, date d, heure h_debut
-        , heure h_fin);
+        , heure h_fin, std::string description
+        , std::string localisation);
         rdv(std::string nom, date d, heure h_debut
-        , heure h_fin
+        , heure h_fin, std::string description
+        , std::string localisation
         , LPersonne* participants);
         rdv(const rdv& r);
         virtual ~rdv();
@@ -31,21 +32,26 @@ class rdv
         void setHDebut(heure debut);
         heure h_fin() const;
         void setHFin(heure fin);
+        std::string description() const;
+        void setDescription(std::string description);
+        std::string localisation() const;
+        void setLocalisation(std::string localisation);
         LPersonne* participants() const;
         void setParticipants(LPersonne *participants);
 
         //METHODES
         void ajouterParticipant(personne*& pers);
         void save(std::ostream& ost) const;
-        // void load(std::istream& ist);
+        void load(std::istream& ist);
+        void exporter(std::ostream& ost) const;
         bool estAvant(const rdv& r) const;
         bool overlap(const rdv& r) const;
 
 
         bool operator>(const rdv& r);
         bool operator==(const rdv& r);
-        // friend std::ostream& operator <<(std::ostream& ost, const rdv& r);
-        // friend std::istream& operator >>(std::istream& ist, rdv& r);
+        friend std::ostream& operator <<(std::ostream& ost, const rdv& r);
+        friend std::istream& operator >>(std::istream& ist, rdv& r);
 
 
     protected:
@@ -54,6 +60,8 @@ class rdv
         std::string d_nom;
         date d_date;
         std::array<heure, 2> d_horaires;
+        std::string d_description;
+        std::string d_localisation;
         LPersonne *d_participants;
         rdv *d_suiv;
         //rdv* d_prec;
