@@ -1,4 +1,4 @@
-#include "LPersonne.h"
+#include "lpersonne.h"
 #include <fstream>
 
 LPersonne::LPersonne(): d_tete{nullptr}
@@ -217,6 +217,47 @@ int LPersonne::supprimer(personne*& p)
     return (OK);
 }
 
+void LPersonne::save(std::ostream& ost) const
+{
+    ost << "BEGIN:LPERSONNE" << std::endl;
+    
+    personne *crt = d_tete;
+    while(crt != nullptr)
+    {
+        ost << *crt;
+        crt = crt->d_suiv;
+    }
+
+    ost << "END:LPERSONNE" << std::endl;
+}
+
+void LPersonne::load(std::istream& ist)
+{
+    std::string ligne{""};
+    int ist_pos;
+
+    ist >> ligne;
+    if (ligne != "BEGIN:LPERSONNE")
+        return;
+
+    while(!ist.eof())
+    {
+        personne *p{new personne{}};
+        ist >> *p;
+        if(!p->nomComplet().empty())
+            ajouter(p);
+        else
+            delete p;
+        
+        int ist_lastpos = ist.tellg();
+        ist >> ligne;
+        if(ligne == "END:LPERSONNE")
+            break;
+        else
+            ist.seekg(ist_lastpos);
+    }
+}
+
 void LPersonne::exporter(std::ostream& ost) const
 {
     personne *crt = d_tete;
@@ -242,7 +283,7 @@ void LPersonne::importer(std::istream& ist)
     {
         personne *p{new personne{}};
         p->importer(ist);
-        if(p->nomComplet().length() > 0)
+        if(!p->nomComplet().empty())
             ajouter(p);
         else
             delete p;
@@ -260,4 +301,35 @@ int LPersonne::importerDepuis(const std::string fichier)
     ift.close();
 
     return (OK);
+}
+
+bool LPersonne::operator==(const LPersonne& lp) const
+{
+    if(d_taille != lp.d_taille)
+        return false;
+
+    personne *crt = d_tete;
+    personne *acmp = lp.d_tete;
+
+    while(crt != nullptr && acmp != nullptr)
+    {
+        if(!(*crt == *acmp))
+            return false;
+
+        crt = crt->d_suiv;
+        acmp = acmp->d_suiv;
+    }
+
+    return true;
+}
+
+friend std::istream& operator>>(std::istream& ist, LPersonne& lp)
+{
+    lp.load(ist);
+    return ist;
+}
+friend std::ostream& operator<<(std::ostream& ost, const LPersonne& lp)
+{
+    lp.save(ost);
+    return ost;
 }

@@ -28,19 +28,19 @@ void heure::setmn(unsigned int mn)
     d_mn = mn;
 }
 
-void heure::afficheHeure(std::ostream& ost) const
+void heure::affiche(std::ostream& ost) const
 {
-    ost << d_h << "h" << d_mn;
+    ost << d_h << ":" << d_mn;
 
 }
 
 std::ostream& operator<<(std::ostream& ost, const heure& h)
 {
-    h.afficheHeure(ost);;
+    h.affiche(ost);;
     return ost;
 }
 
-void heure::lireHeure(std::istream& ist)
+void heure::lire(std::istream& ist)
 {
     char c;
     ist >> d_h >> c >> d_mn;
@@ -48,41 +48,37 @@ void heure::lireHeure(std::istream& ist)
 
 std::istream& operator>>(std::istream& ist, heure& h)
 {
-    h.lireHeure(ist);
+    h.lire(ist);
     return ist;
 }
 
-bool heure::estAvant(const heure& heure) const
+bool heure::estAvant(const heure& h) const
 {
-    if(d_h > heure.d_h)
+    if(d_h > h.d_h)
         return false;
 
-    else if(d_h == heure.d_h && d_mn >= heure.d_mn)
+    else if(d_h == h.d_h && d_mn >= h.d_mn)
         return false;
 
     return true;
 }
 
-bool heure::estMemeHeureQue(const heure& heure) const
+bool heure::estMemeHeureQue(const heure& h) const
 {
-    return (d_h == heure.d_h && d_mn == heure.d_mn);
+    return (d_h == h.d_h && d_mn == h.d_mn);
 }
 
 bool heure::estEntre(const heure& debut, const heure& fin) const
 {
-    if(!estAvant(debut) && estAvant(fin))
-        return true;
-
-    return false;
+    return (!estAvant(debut) && estAvant(fin));
 }
 
-bool overlapHorraires(const heure& debut1, const heure& fin1, const heure& debut2, const heure& fin2)
+bool heure::operator==(const heure& h) const
 {
-    if(debut1.estEntre(debut2, fin2) || fin1.estEntre(debut2, fin2))
-        return true;
+    return estMemeHeureQue(h);
+}
 
-    if(debut1.estAvant(debut2) && !fin1.estAvant(fin2))
-        return true;
-
-    return false;
+bool heure::operator>(const heure& h) const
+{
+    return estAvant(h);
 }
