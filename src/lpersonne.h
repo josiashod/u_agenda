@@ -28,10 +28,16 @@ class LPersonne {
         int supprimer(std::string nomComplet);
         int supprimer(personne*& p);
 
+        void save(std::ostream& ost) const;
+        void load(std::istream& ist);
         void exporter(std::ostream& ost) const;
         void exporterDans(const std::string fichier) const;
         void importer(std::istream& ist);
         int importerDepuis(const std::string fichier);
+
+        bool operator==(const LPersonne& lp) const;
+        // friend std::istream& operator>>(std::istream& ist, LPersonne& lp);
+        // friend std::ostream& operator<<(std::ostream& ost, const LPersonne& lp);
 
     private:
         personne* d_tete;
