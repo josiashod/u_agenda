@@ -25,6 +25,7 @@ class LPersonne {
         void ajouter(personne*& p);
         personne* rechercher(std::string nomComplet) const;
         LPersonne* rechercherPlusieurs(std::string str) const;
+        bool estDansLaListe(const personne* p) const;
         int supprimer(std::string nomComplet);
         int supprimer(personne*& p);
 

@@ -109,7 +109,8 @@ void rdv::setParticipants(LPersonne* participants){
 }
 
 // METHODES
-void rdv::ajouterParticipant(personne*& pers){
+void rdv::ajouterParticipant(personne*& pers)
+{
     d_participants->ajouter(pers);
 }
 

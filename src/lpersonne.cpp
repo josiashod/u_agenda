@@ -154,6 +154,16 @@ LPersonne* LPersonne::rechercherPlusieurs(std::string str) const
     return (lp);
 }
 
+bool LPersonne::estDansLaListe(const personne* p) const
+{
+    personne *crt = d_tete;
+
+    while(crt && crt->nomComplet() != p->nomComplet())
+        crt = crt->d_suiv;
+
+    return (crt != nullptr);
+}
+
 int LPersonne::supprimer(std::string nomComplet)
 {
     if (nomComplet.length() <= 0)

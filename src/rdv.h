@@ -7,6 +7,7 @@
 #include "date.h"
 #include "heure.h"
 
+class LRdv;
 
 class rdv
 {
@@ -40,7 +41,6 @@ class rdv
         void setParticipants(LPersonne *participants);
 
         //METHODES
-        void ajouterParticipant(personne*& pers);
         void save(std::ostream& ost) const;
         void load(std::istream& ist);
         void exporter(std::ostream& ost) const;
@@ -53,7 +53,7 @@ class rdv
         friend std::ostream& operator <<(std::ostream& ost, const rdv& r);
         friend std::istream& operator >>(std::istream& ist, rdv& r);
 
-
+        friend class LRdv;
     protected:
 
     private:
@@ -66,6 +66,9 @@ class rdv
         rdv *d_suiv;
         //rdv* d_prec;
         //unsigned int d_status;
+
+        // Methodes
+        void ajouterParticipant(personne*& pers);
 };
 
 #endif // __RDV_H__
