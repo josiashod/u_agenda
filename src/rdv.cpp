@@ -58,14 +58,14 @@ date rdv::day() const
     return d_date;
 }
 
-void rdv::setDate(date day){
+void rdv::setDate(const date& day) {
     d_date = day;
 }
 
 heure rdv::h_debut()const{
     return d_horaires[0];
 }
-void rdv::setHDebut(heure debut){
+void rdv::setHDebut(const heure& debut){
     d_horaires[0] = debut;
 }
 
@@ -74,7 +74,7 @@ heure rdv::h_fin() const
     return d_horaires[1];
 }
 
-void rdv::setHFin(heure fin)
+void rdv::setHFin(const heure& fin)
 {
     d_horaires[1] = fin;
 }
@@ -109,9 +109,14 @@ void rdv::setParticipants(LPersonne* participants){
 }
 
 // METHODES
-void rdv::ajouterParticipant(personne*& pers)
+void rdv::ajouterParticipant(personne*& participant)
 {
-    d_participants->ajouter(pers);
+    d_participants->ajouter(participant);
+}
+
+void rdv::supprimerParticipants(personne*& participant)
+{
+    d_participants->supprimer(participant);
 }
 
 void rdv::save(std::ostream& ost) const

@@ -28,17 +28,19 @@ class rdv
         std::string nom() const;
         void setNom(std::string nom);
         date day() const;
-        void setDate(date day);
+        void setDate(const date& day) ;
         heure h_debut() const;
-        void setHDebut(heure debut);
+        void setHDebut(const heure& debut);
         heure h_fin() const;
-        void setHFin(heure fin);
+        void setHFin(const heure& fin);
         std::string description() const;
         void setDescription(std::string description);
         std::string localisation() const;
         void setLocalisation(std::string localisation);
         LPersonne* participants() const;
         void setParticipants(LPersonne *participants);
+        void ajouterParticipants(personne*& participant);
+        void supprimerParticipants(personne*& participant);
 
         //METHODES
         void save(std::ostream& ost) const;
