@@ -39,8 +39,8 @@ class rdv
         void setLocalisation(std::string localisation);
         LPersonne* participants() const;
         void setParticipants(LPersonne *participants);
-        void ajouterParticipants(personne*& participant);
-        void supprimerParticipants(personne*& participant);
+        void ajouterParticipant(personne*& participant);
+        void supprimerParticipant(personne*& participant);
 
         //METHODES
         void save(std::ostream& ost) const;
@@ -70,7 +70,6 @@ class rdv
         //unsigned int d_status;
 
         // Methodes
-        void ajouterParticipant(personne*& pers);
 };
 
 #endif // __RDV_H__
