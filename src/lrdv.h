@@ -28,10 +28,12 @@ class LRdv
         bool overlap(const personne& p, const date& d
         , const heure* h);
         void supprimer(std::string nom);
-        void exporter(std::ostream& ost) const;
-        void importer(std::istream& ist);
+        void exporter(std::ostream& ost) const; // exporte une liste de rendez-vous
+        void exporter(std::ostream& ost, rdv *r) const // exporte un seul rendez-vous
         // static bool personneOverlapRdv(const LRdv* lr, const personne* p
         // , const rdv* r);
+        void save(std::ostream& ost) const;
+        void load(std::istream& ist);
 
     private:
         rdv *d_tete;

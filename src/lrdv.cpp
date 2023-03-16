@@ -153,3 +153,71 @@ void LRdv::supprimer(std::string nom)
 		delete as;
 	}
 }
+
+void LRdv::exporter(std::ostream& ost) const
+{
+	ost << "BEGIN:VCALENDAR" << std::endl;
+	ost << "VERSION:2.0" << std::endl;
+	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
+	
+	rdv *crt = d_tete;
+    while(crt != nullptr)
+    {
+        (*crt).exporter(ost);
+        crt = crt->d_suiv;
+    }
+
+	ost << "END:VCALENDAR" << std::endl;
+}
+
+void LRdv::exporter(std::ostream& ost, rdv *r) const
+{
+	ost << "BEGIN:VCALENDAR" << std::endl;
+	ost << "VERSION:2.0" << std::endl;
+	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
+	
+	(*r).exporter(ost);
+
+	ost << "END:VCALENDAR" << std::endl;
+}
+
+void LRdv::save(std::ostream& ost) const
+{
+    ost << "BEGIN:LRDV" << std::endl;
+    
+    rdv *crt = d_tete;
+    while(crt != nullptr)
+    {
+        ost << *crt;
+        crt = crt->d_suiv;
+    }
+
+    ost << "END:LRDV" << std::endl;
+}
+
+void LRdv::load(std::istream& ist)
+{
+    std::string ligne{""};
+    int ist_pos;
+
+    ist >> ligne;
+    if (ligne != "BEGIN:LRDV")
+        return;
+
+    while(!ist.eof())
+    {
+        rdv *r{new rdv{}};
+        ist >> *r;
+        if(!r->nom().empty())
+            ajouter(r);
+        else
+            delete r;
+        
+        int ist_lastpos = ist.tellg();
+        ist >> ligne;
+        if(ligne == "END:LRDV")
+            break;
+        else
+            ist.seekg(ist_lastpos);
+    }
+}
