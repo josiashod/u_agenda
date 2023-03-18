@@ -41,7 +41,7 @@ void date::setAnnee(unsigned int annee)
     d_annee = annee;
 }
 
-void date::lireDate(std::istream& ist)
+void date::lire(std::istream& ist)
 {
     char c;
     ist >> d_jour >> c >> d_mois >> c >> d_annee;
@@ -49,18 +49,18 @@ void date::lireDate(std::istream& ist)
 
 std::istream& operator>>(std::istream& ist, date& d)
 {
-    d.lireDate(ist);
+    d.lire(ist);
     return ist;
 }
 
-void date::afficheDate(std::ostream& ost) const
+void date::affiche(std::ostream& ost) const
 {
-    ost << d_jour << "/" << d_mois << "/" << d_annee;
+    ost << d_jour << "/" << d_mois << "/" << d_annee << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& ost, const date& d)
 {
-    d.afficheDate(ost);
+    d.affiche(ost);
     return ost;
 }
 

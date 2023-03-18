@@ -132,13 +132,13 @@ bool personne::vientAvant(const personne& p) const
 
 void personne::affiche(std::ostream& ost) const
 {
-    ost << '{' + d_nom + ", " + d_prenom + ", " + d_numero + ", " + d_email + '}' << std::endl;
+    ost << '{' + d_nom + ", " + d_prenom + ", "
+    + d_numero + ", " + d_email + '}' << std::endl;
 }
 
 void personne::lire(std::istream &ist)
 {
     char c;
-    std::string test;
 
     ist >> c >> d_nom >> d_prenom >> d_email >> d_numero;
 
@@ -165,6 +165,10 @@ void personne::importer(std::istream& ist)
     std::size_t pos;
 
     ist >> ligne;
+
+    if (ligne != "BEGIN:VCARD")
+        return;
+
     while(!ist.eof() || ligne != "END:VCARD")
     {
         // On recupere le nom et le prenom
@@ -196,7 +200,9 @@ void personne::importer(std::istream& ist)
 
 bool personne::operator==(const personne& p) const
 {
-    return (nomComplet().compare(p.nomComplet()) == 0);
+    return (nomComplet() == p.nomComplet() &&
+        d_numero == p.d_numero && 
+        d_email == p.d_email);
 }
 
 bool personne::operator>(const personne& p) const
