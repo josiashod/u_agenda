@@ -25,6 +25,9 @@ class heure
         bool operator==(const heure& h) const;
         bool operator>(const heure& h) const;
 
+        friend std::istream& operator>>(std::istream& ist, heure& h);
+        friend std::ostream& operator<<(std::ostream& ost, const heure& h);
+
     protected:
 
     private:

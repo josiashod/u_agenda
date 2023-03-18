@@ -3,23 +3,36 @@
 
 #include <string>
 #include <iostream>
+#include "rdv.h"
 
-class rdv;
 class date;
 class heure;
+class LPersonne;
+class personne;
 
-class LRdv{
+class LRdv
+{
     public:
+        // CONSTRUCTEURS ET DESTRUCTEURS
         LRdv();
         ~LRdv();
-        rdv *tete();
-        void ajout_rdv(std::string nom, date jour, heure h_debut, heure h_fin,
-                    std::string description, std::string localisation, std::string resume);
-        void ajouter_rdv(rdv& *rdv);
-        rdv *recherche(std::string nom) const;
-        void supprime(std::string nom);
-        void exporter(std::ostream& ost) const;
-        void importer(std::istream& ist);
+
+        // ACCESSEURS & MUTATEURS
+        rdv *tete() const;
+
+        // METHODES
+        int ajouter(const rdv& r);
+        rdv* trouverUn(std::string nom) const;
+        LRdv* trouverParDate(const date& d) const;
+        LRdv* trouverParPersonne(const personne& p) const;
+        bool overlap(const personne& p, const date& d
+        , const heure& h);
+        void supprimer(std::string nom);
+        void exporter(std::ostream& ost) const; // exporte une liste de rendez-vous
+        void exporter(std::ostream& ost, const rdv& r) const; // exporte un seul rendez-vous
+        void save(std::ostream& ost) const;
+        void load(std::istream& ist);
+
     private:
         rdv *d_tete;
 };

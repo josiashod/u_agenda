@@ -30,13 +30,13 @@ void heure::setmn(unsigned int mn)
 
 void heure::affiche(std::ostream& ost) const
 {
-    ost << d_h << ":" << d_mn;
+    ost << d_h << ":" << d_mn << std::endl;
 
 }
 
 std::ostream& operator<<(std::ostream& ost, const heure& h)
 {
-    h.affiche(ost);;
+    h.affiche(ost);
     return ost;
 }
 

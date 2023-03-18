@@ -83,10 +83,12 @@ int LPersonne::ajouter(std::string nom, std::string prenom
     return (OK);
 }
 
-void LPersonne::ajouter(personne*& p)
+void LPersonne::ajouter(const personne& pers)
 {
-    if (!p)
+    if (pers.d_status != OK || pers.nomComplet().empty())
         return;
+
+    auto p{new personne{pers}};
 
     d_taille++;
 
@@ -145,13 +147,18 @@ LPersonne* LPersonne::rechercherPlusieurs(std::string str) const
     {
         if (crt->contient(str))
         {
-            auto p{new personne{*crt}};
+            auto p{personne{*crt}};
             lp->ajouter(p);
         }
         crt = crt->d_suiv;
     }
 
     return (lp);
+}
+
+bool LPersonne::estDansLaListe(const personne& p) const
+{
+    return (rechercher(p.nomComplet()) != nullptr);
 }
 
 int LPersonne::supprimer(std::string nomComplet)
@@ -189,36 +196,50 @@ int LPersonne::supprimer(std::string nomComplet)
     return (OK);
 }
 
-int LPersonne::supprimer(personne*& p)
+int LPersonne::supprimer(const personne& p)
 {
 
-    if(!p)
+    if(p.d_status != OK || p.nomComplet().empty())
         return (ERR_NOT_FOUND);
 
-    if(p == d_tete)
+    personne *as;
+
+    if(p.nomComplet() == d_tete->nomComplet())
     {
-        d_tete = p->d_suiv;
+        as = d_tete;
+        d_tete = d_tete->d_suiv;
         d_tete->d_prec = nullptr;
     }
-    else if(p == d_queue)
+    else if(p.nomComplet() == d_queue->nomComplet())
     {
-        d_queue = p->d_prec;
-        p->d_prec->d_suiv = nullptr;
+        as = d_queue;
+        d_queue = d_queue->d_prec;
+        d_queue->d_suiv = nullptr;
     }
     else
     {
-        p->d_suiv->d_prec = p->d_prec;
-        p->d_prec->d_suiv = p->d_suiv;
+        personne *crt = d_tete;
+        while(crt && crt->nomComplet() != p.nomComplet())
+            crt = crt->d_suiv;
+
+        if(!crt)
+            return (ERR_NOT_FOUND);
+        as = crt;
+        crt->d_suiv->d_prec = crt->d_prec;
+        crt->d_prec->d_suiv = crt->d_suiv;
     }
 
     d_taille--;
-    delete p;
+    delete as;
 
     return (OK);
 }
 
 void LPersonne::save(std::ostream& ost) const
 {
+    if(!d_tete)
+        return;
+
     ost << "BEGIN:LPERSONNE" << std::endl;
     
     personne *crt = d_tete;
@@ -234,7 +255,6 @@ void LPersonne::save(std::ostream& ost) const
 void LPersonne::load(std::istream& ist)
 {
     std::string ligne{""};
-    int ist_pos;
 
     ist >> ligne;
     if (ligne != "BEGIN:LPERSONNE")
@@ -242,12 +262,10 @@ void LPersonne::load(std::istream& ist)
 
     while(!ist.eof())
     {
-        personne *p{new personne{}};
-        ist >> *p;
-        if(!p->nomComplet().empty())
+        personne p{};
+        ist >> p;
+        if(p.d_status == OK && !p.nomComplet().empty())
             ajouter(p);
-        else
-            delete p;
         
         int ist_lastpos = ist.tellg();
         ist >> ligne;
@@ -281,12 +299,10 @@ void LPersonne::importer(std::istream& ist)
 {
     while(!ist.eof())
     {
-        personne *p{new personne{}};
-        p->importer(ist);
-        if(!p->nomComplet().empty())
+        personne p{};
+        p.importer(ist);
+        if(!p.nomComplet().empty())
             ajouter(p);
-        else
-            delete p;
     }
 }
 
@@ -323,12 +339,12 @@ bool LPersonne::operator==(const LPersonne& lp) const
     return true;
 }
 
-friend std::istream& operator>>(std::istream& ist, LPersonne& lp)
+std::istream& operator>>(std::istream& ist, LPersonne& lp)
 {
     lp.load(ist);
     return ist;
 }
-friend std::ostream& operator<<(std::ostream& ost, const LPersonne& lp)
+std::ostream& operator<<(std::ostream& ost, const LPersonne& lp)
 {
     lp.save(ost);
     return ost;
