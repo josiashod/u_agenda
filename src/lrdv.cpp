@@ -1,6 +1,5 @@
 #include "lrdv.h"
 #include "lpersonne.h"
-#include "rdv.h"
 #include "date.h"
 #include "heure.h"
 
@@ -11,7 +10,8 @@ LRdv::~LRdv()
 {
     rdv* as = d_tete;
 
-    while(as){
+    while(as)
+	{
         d_tete = as->d_suiv;
         delete as;
         as = d_tete;
@@ -20,28 +20,16 @@ LRdv::~LRdv()
 
 rdv* LRdv::tete() const { return d_tete; }
 
-// bool LRdv::personneOverlapRdv(const LRdv* lr, const personne* p
-// , const rdv* r)
-// {
-
-// 	rdv *crt = lr->d_tete;
-
-// 	while(crt)
-// 	{
-// 		if(!crt->participants()->estDansLaListe(crtP))
-// 			continue;
-
-// 		if(r->overlap(*crt))
-// 			return (true);
-		
-// 		crt = crt->d_suiv;
-// 	}
-
-// 	return (false);
-// }
-
-int LRdv::ajouter(rdv*& nr)
+int LRdv::ajouter(const rdv& r)
 {
+	auto nr{new rdv{r}};
+
+	if (!d_tete)
+	{
+		d_tete = nr;
+		return (OK);
+	}
+
 	rdv *crt = d_tete;
 
 	if ((*nr) > (*crt))
@@ -72,7 +60,7 @@ rdv* LRdv::trouverUn(std::string nom) const
 	return crt;
 }
 
-LRdv* LRdv::trouverParDate(const date& d)
+LRdv* LRdv::trouverParDate(const date& d) const
 {
 	rdv *crt = d_tete;
 	auto lr{new LRdv{}};
@@ -80,22 +68,22 @@ LRdv* LRdv::trouverParDate(const date& d)
 	while(crt)
 	{
 		if (crt->d_date == d)
-			lr->ajouter(crt);
+			lr->ajouter(*crt);
 		crt = crt->d_suiv;
 	}
 
 	return (lr);
 }
 
-LRdv* LRdv::trouverParPersone(const personne& p)
+LRdv* LRdv::trouverParPersonne(const personne& p) const
 {
 	rdv *crt = d_tete;
 	auto lr{new LRdv{}};
 
 	while(crt)
 	{
-		if (crt->d_participants->estDansLaListe(&p))
-			lr->ajouter(crt);
+		if (crt->d_participants->estDansLaListe(p))
+			lr->ajouter(*crt);
 		crt = crt->d_suiv;
 	}
 
@@ -103,35 +91,27 @@ LRdv* LRdv::trouverParPersone(const personne& p)
 }
 
 bool LRdv::overlap(const personne& p, const date& d
-	, const heure* h)
+	, const heure& h)
 {
-	auto lr = trouverParDate(d);
-	LRdv* tmp = nullptr;
+	bool overlap = false;
+	LRdv* lrpd = trouverParDate(d);
 
-	if (lr == nullptr)
+	if (lrpd)
 	{
-		delete lr;
-		return true;
+		LRdv* lrpp = lrpd->trouverParPersonne(p);
+		if(lrpp)
+		{
+			rdv* crt = lrpd->d_tete;
+			while(crt && !h.estEntre(crt->h_debut(), crt->h_fin()))
+				crt = crt->d_suiv;
+
+			overlap = (crt != nullptr);
+			delete lrpp;
+		}
+		delete lrpd;
 	}
 
-	tmp = lr;
-	lr = lr->trouverParPersone(p);
-	delete tmp;
-
-	if(!lr)
-	{
-		delete lr;
-		return true;
-	}
-
-	rdv* crt = lr->d_tete;
-	while(crt && !h->estEntre(crt->h_debut(), crt->h_fin()))
-		crt = crt->d_suiv;
-
-	bool res = (crt != nullptr);
-	delete lr;
-
-	return res;
+	return overlap;
 }
 
 void LRdv::supprimer(std::string nom)
@@ -170,19 +150,22 @@ void LRdv::exporter(std::ostream& ost) const
 	ost << "END:VCALENDAR" << std::endl;
 }
 
-void LRdv::exporter(std::ostream& ost, rdv *r) const
+void LRdv::exporter(std::ostream& ost, const rdv& r) const
 {
 	ost << "BEGIN:VCALENDAR" << std::endl;
 	ost << "VERSION:2.0" << std::endl;
 	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
 	
-	(*r).exporter(ost);
+	r.exporter(ost);
 
 	ost << "END:VCALENDAR" << std::endl;
 }
 
 void LRdv::save(std::ostream& ost) const
 {
+	if(!d_tete)
+		return;
+ 
     ost << "BEGIN:LRDV" << std::endl;
     
     rdv *crt = d_tete;
@@ -200,7 +183,7 @@ void LRdv::load(std::istream& ist)
     std::string ligne{""};
     int ist_pos;
 
-    ist >> ligne;
+    getline(ist, ligne);
     if (ligne != "BEGIN:LRDV")
         return;
 
@@ -208,16 +191,11 @@ void LRdv::load(std::istream& ist)
     {
         rdv *r{new rdv{}};
         ist >> *r;
+		std::cout << *r;
+
         if(!r->nom().empty())
-            ajouter(r);
+            ajouter(*r);
         else
             delete r;
-        
-        int ist_lastpos = ist.tellg();
-        ist >> ligne;
-        if(ligne == "END:LRDV")
-            break;
-        else
-            ist.seekg(ist_lastpos);
     }
 }
