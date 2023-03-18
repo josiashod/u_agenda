@@ -39,8 +39,8 @@ class rdv
         void setLocalisation(std::string localisation);
         LPersonne* participants() const;
         void setParticipants(LPersonne *participants);
-        void ajouterParticipant(personne*& participant);
-        void supprimerParticipant(personne*& participant);
+        void ajouterParticipant(const personne& participant);
+        void supprimerParticipant(const personne& participant);
 
         //METHODES
         void save(std::ostream& ost) const;
@@ -64,8 +64,8 @@ class rdv
         std::array<heure, 2> d_horaires;
         std::string d_description;
         std::string d_localisation;
-        LPersonne *d_participants;
-        rdv *d_suiv;
+        LPersonne* d_participants;
+        rdv* d_suiv;
         //rdv* d_prec;
         //unsigned int d_status;
 

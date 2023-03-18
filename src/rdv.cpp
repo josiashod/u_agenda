@@ -1,4 +1,5 @@
 #include "rdv.h"
+#include "lpersonne.h"
 
 // CONSTRUCTEURS + DESTRUCTEUR
 rdv::rdv()
@@ -31,10 +32,24 @@ rdv::rdv(const rdv& r):
     d_nom{r.d_nom}
     , d_date{r.d_date}
     , d_horaires{r.d_horaires[0], r.d_horaires[1]}
+    , d_description{r.d_description}
+    , d_localisation{r.d_localisation}
     , d_participants{nullptr}
     , d_suiv{nullptr}
     // , d_prec{nullptr}
-{}
+{
+
+    if(r.d_participants)
+    {
+        auto rp_tete = (r.d_participants)->tete();
+        d_participants = new LPersonne();
+        while(rp_tete)
+        {
+            d_participants->ajouter(*rp_tete);
+            rp_tete = rp_tete->suivant();
+        }
+    }
+}
 
 rdv::~rdv()
 {
@@ -109,51 +124,59 @@ void rdv::setParticipants(LPersonne* participants){
 }
 
 // METHODES
-void rdv::ajouterParticipant(personne*& participant)
+void rdv::ajouterParticipant(const personne& participant)
 {
+    if(!d_participants)
+        d_participants = new LPersonne();
+
     d_participants->ajouter(participant);
 }
 
-void rdv::supprimerParticipants(personne*& participant)
+void rdv::supprimerParticipant(const personne& participant)
 {
-    d_participants->supprimer(participant);
+    if(!d_participants)
+        return;
+    d_participants->supprimer(participant.nomComplet());
 }
 
 void rdv::save(std::ostream& ost) const
 {
     ost << "BEGIN:RDV" << std::endl;
-    ost << '{' + d_nom + ", " + d_description + ", "
-    + d_localisation + '}' << std::endl;
+    ost << d_nom << std::endl;
+    ost << d_description << std::endl;
+    ost << d_localisation << std::endl;
     ost << d_date;
     ost << d_horaires[0];
     ost << d_horaires[1];
-    ost << *d_participants;
+    if (d_participants)
+        ost << *d_participants;
     ost << "END:RDV" << std::endl;
 }
 
 void rdv::load(std::istream& ist)
 {
     std::string ligne{""};
-    int ist_pos;
 
-    ist >> ligne;
-
+    getline(ist, ligne);
     if (ligne != "BEGIN:RDV")
         return;
 
-    char c;
-    ist >> c >> d_nom >> d_description >> d_localisation;
-
-    d_nom = d_nom.substr(0, d_nom.length() - 1);
-    d_description = d_description.substr(0, d_description.length() - 1);
-    d_localisation = d_localisation.substr(0, d_localisation.length() - 1);
+    getline(ist, d_nom, '\n');
+    getline(ist, d_description, '\n');
+    getline(ist, d_localisation, '\n');
 
     ist >> d_date;
     ist >> d_horaires[0];
     ist >> d_horaires[1];
 
-    d_participants = new LPersonne();
-    ist >> (*d_participants);
+    int ist_pos = ist.tellg();
+    ist >> ligne;
+    if(ligne == "BEGIN:LPERSONNE")
+    {
+        ist.seekg(ist_pos);
+        d_participants = new LPersonne();
+        ist >> (*d_participants);
+    }
 
     ist >> ligne;
 }
@@ -177,9 +200,11 @@ void rdv::exporter(std::ostream& ost) const
     ost << "DTSTART:" << timestamp(d_date, d_horaires[0]) << std::endl;
     ost << "DTEND:" << timestamp(d_date, d_horaires[1]) << std::endl;
     ost << "SUMMARY:" << d_nom << std::endl;
-    ost << "DESCRIPTION:\\n\\n" << d_description << "\\n";
+    ost << "DESCRIPTION:\\n\\n" << d_description;
 
-    personne *crt = d_participants->tete();
+    personne *crt = (d_participants) ? d_participants->tete() : nullptr;
+    if (crt)
+        ost << "\\n";
     while(crt)
     {
         ost << crt->nomComplet() << "\\n";
