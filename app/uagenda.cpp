@@ -1,6 +1,7 @@
 #include "uagenda.h"
 #include "rdvdialog.h"
-#include "contactdialog.h"
+#include "contactsdialog.h"
+#include "contactform.h"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -21,7 +22,9 @@
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
     , d_currentDate{QDate::currentDate()}
+    , d_contacts{nullptr}
 {
+    loadData();
     creerInterface();
     afficheDate();
     afficheCalendrier();
@@ -32,6 +35,15 @@ UAgenda::~UAgenda()
     delete d_grille;
     delete d_etiquetteDate;
     delete d_calendrierWidget;
+    delete d_contacts;
+}
+
+void UAgenda::loadData()
+{
+    d_contacts = new LPersonne();
+    d_contacts->ajouter("KAGEYAMA", "Tobio", "0609090909", "kageyama.tobio@uha.fr");
+    d_contacts->ajouter("SHOYO", "Hinata", "0609090909", "hinata.shoyo@uha.fr");
+    d_contacts->ajouter("ADAM", "Sandler", "0609090909", "sandler.adam@uha.fr");
 }
 
 void UAgenda::setPolice()
@@ -101,6 +113,8 @@ void UAgenda::creerInterface()
     menu->addAction("Ajouter un contact");
     //menu->setMinimumSize( create_button->width(), menu->height() );
     create_button->setMenu(menu);
+
+    connect(menu, &QMenu::triggered, this, &UAgenda::onAjouter);
 
     d_calendrierWidget = new QCalendarWidget();
     d_calendrierWidget->setGridVisible(true);
@@ -249,10 +263,10 @@ void UAgenda::onCalendrierChange(int year, int month)
 
 void UAgenda::onAfficheContact()
 {
-    auto contactDialog{new ContactDialog(this)};
+    auto contacts{new ContactsDialog(d_contacts, this)};
 
-    contactDialog->setModal(true);
-    contactDialog->show();
+    contacts->setModal(true);
+    contacts->show();
 }
 
 void UAgenda::onRechercheRdv()
@@ -307,4 +321,23 @@ void UAgenda::onExportRdv()
 //            out.setVersion(QDataStream::Qt_4_5);
 //            out << contacts;
     }
+}
+
+void UAgenda::onAjouter(QAction *action)
+{
+    if(action->text() == "Ajouter un rendez-vous")
+    {}
+    else
+    {
+        auto form{new ContactForm()};
+        form->setModal(true);
+        connect(form, &ContactForm::addPersonne, this, &UAgenda::onAjouterContact);
+        form->exec();
+    }
+}
+
+void UAgenda::onAjouterContact(personne p)
+{
+    d_contacts->ajouter(p);
+    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été ajouté avec succès")}.exec();
 }

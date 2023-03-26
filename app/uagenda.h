@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QDate>
+#include "./../src/lpersonne.h"
 
 class QVBoxLayout;
 class QGridLayout;
@@ -23,6 +24,8 @@ public:
     void afficheDate();
     void afficheCalendrier();
     void rafraichirGrille();
+    void loadData();
+    void saveData();
 
 public slots:
     void onReinitDate();
@@ -33,6 +36,8 @@ public slots:
     void onRechercheRdv();
     void onAfficheRdvsJour();
     void onExportRdv();
+    void onAjouter(QAction *action);
+    void onAjouterContact(personne p);
 
 
 
@@ -41,6 +46,7 @@ private:
     QGridLayout *d_grille;
     QCalendarWidget *d_calendrierWidget;
     QLabel *d_etiquetteDate;
+    LPersonne *d_contacts;
 //    ContactDialog *contactDialog;
 };
 #endif // UAGENDA_H

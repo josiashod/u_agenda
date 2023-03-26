@@ -1,4 +1,7 @@
-#include "contactdialog.h"
+#include "contactsdialog.h"
+#include "contactitem.h"
+#include "contact.h"
+
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -7,74 +10,29 @@
 #include <QPushButton>
 #include <QFrame>
 #include <QListWidget>
+#include <QMessageBox>
 
-
-Contact::Contact(QWidget *parent, QString nomComplet, QString numero) :
-    QWidget(parent)
-  , d_nomComplet{nomComplet}
-  , d_numero{numero}
+ContactsDialog::ContactsDialog(LPersonne *contacts, QWidget *parent) :
+    QDialog(parent),
+    d_contacts_default{contacts},
+    d_contacts{contacts}
 {
     creerInterface();
+    afficherContacts();
 }
 
-Contact::~Contact()
+ContactsDialog::~ContactsDialog()
 {
 }
 
-void Contact::creerInterface()
-{
-    auto ligne{new QHBoxLayout()};
-
-    auto info{new QVBoxLayout()};
-    info->setSpacing(5);
-
-    /*auto email{new QLabel(d_email)};
-    email->setStyleSheet("QLabel {font-weight: 12; font-size: 14px}");*/
-
-    auto numero{new QLabel(d_numero)};
-    numero->setStyleSheet("QLabel {font-weight: 4; font-size: 13px}");
-
-    info->addWidget(new QLabel(d_nomComplet), 0);
-    info->addWidget(numero, 0);
-//    info->addWidget(email, 0);
-
-    ligne->addLayout(info, 1);
-
-    auto btnAffiche{new QPushButton(QIcon(":/icons/eye.svg"), "")};
-    btnAffiche->setAutoDefault(false);
-
-    auto btnModifier{new QPushButton(QIcon(":/icons/pencil-square.svg"), "")};
-    btnModifier->setAutoDefault(false);
-
-    auto btnSupprimer{new QPushButton(QIcon(":/icons/trash.svg"), "")};
-    btnSupprimer->setAutoDefault(false);
-
-    ligne->addWidget(btnAffiche, 0, Qt::AlignRight|Qt::AlignCenter);
-    ligne->addWidget(btnModifier, 0, Qt::AlignRight|Qt::AlignCenter);
-    ligne->addWidget(btnSupprimer, 0, Qt::AlignRight|Qt::AlignCenter);
-
-    setLayout(ligne);
-}
-
-
-ContactDialog::ContactDialog(QWidget *parent) :
-    QDialog(parent)
-{
-    creerInterface();
-}
-
-ContactDialog::~ContactDialog()
-{
-}
-
-void ContactDialog::creerInterface()
+void ContactsDialog::creerInterface()
 {
     setWindowTitle("Mes contacts");
     setMinimumSize(450, 652);
 
     auto main{new QVBoxLayout(this)};
     auto header{new QHBoxLayout()};
-    auto contacts{new QListWidget()};
+    d_list_contacts = new QListWidget();
 
 
     auto titre{new QLabel(tr("Liste des contacts"))};
@@ -96,17 +54,90 @@ void ContactDialog::creerInterface()
     d_recherche = new QLineEdit();
     d_recherche->setPlaceholderText("Rechercher un contact");
     main->addWidget(d_recherche, 0, Qt::AlignTop);
-    main->addWidget(contacts, 55);
+    main->addWidget(d_list_contacts, 55);
+    connect(d_recherche, &QLineEdit::textEdited, this, &ContactsDialog::onRecherche);
+}
 
-    for(int i = 0; i < 10; i++)
+void ContactsDialog::afficherContacts()
+{
+    d_list_contacts->clear();
+
+    if(d_contacts && d_contacts->tete())
     {
-        auto item{new QListWidgetItem()};
+        personne *crt = d_contacts->tete();
+
+        while(crt)
+        {
+            auto item{new QListWidgetItem()};
+            item->setSizeHint(QSize(0, 60));
+            item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+
+            auto contact{new ContactItem(crt)};
+
+            connect(contact, &ContactItem::updated, this, &ContactsDialog::onModifier);
+            connect(contact, &ContactItem::deleted, this, &ContactsDialog::onSupprimer);
+
+            d_list_contacts->addItem(item);
+            d_list_contacts->setItemWidget(item, contact);
+            crt = crt->suivant();
+        }
+    }
+    else
+    {
+        auto item{new QListWidgetItem("Aucun contacts")};
         item->setSizeHint(QSize(0, 60));
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+        item->setTextAlignment(Qt::AlignCenter);
+        d_list_contacts->addItem(item);
+    }
+}
 
-        auto contact{new Contact{nullptr, "Contact N°" + QString::number(i), "+33 45 45 45 45"}};
+void ContactsDialog::onModifier(personne oldPersonne, personne newPersonne)
+{
+    personne *pers = d_contacts_default->rechercher(oldPersonne.nomComplet());
 
-        contacts->addItem(item);
-        contacts->setItemWidget(item, contact);
+    pers->setNom(newPersonne.nom());
+    pers->setPrenom(newPersonne.prenom());
+    pers->setNumero(newPersonne.numero());
+    pers->setEmail(newPersonne.email());
+
+    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été modifié avec succès")}.exec();
+
+    if(d_recherche->text().length() > 0)
+        clear();
+    else
+        afficherContacts();
+}
+
+void ContactsDialog::onSupprimer(std::string nomComplet)
+{
+    d_contacts_default->supprimer(nomComplet);
+
+    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été supprimé avec succès")}.exec();
+
+    if(d_recherche->text().length() > 0)
+        clear();
+    else
+        afficherContacts();
+}
+
+void ContactsDialog::clear()
+{
+    delete d_contacts;
+    d_contacts = d_contacts_default;
+    d_recherche->setText("");
+    afficherContacts();
+}
+
+void ContactsDialog::onRecherche(const QString &text)
+{
+    if(text.length() > 0)
+    {
+        d_contacts = d_contacts->rechercherPlusieurs(text.toStdString());
+        afficherContacts();
+    }
+    else
+    {
+        clear();
     }
 }

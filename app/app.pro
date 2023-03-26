@@ -9,15 +9,36 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    contactdialog.cpp \
+    contact.cpp \
+    contactform.cpp \
+    contactitem.cpp \
+    contactsdialog.cpp \
     main.cpp \
     rdvdialog.cpp \
-    uagenda.cpp
+    uagenda.cpp \
+    ./../src/date.cpp \
+    ./../src/heure.cpp \
+    ./../src/personne.cpp \
+    ./../src/lpersonne.cpp \
+    ./../src/rdv.cpp \
+    ./../src/lrdv.cpp
+
 
 HEADERS += \
-    contactdialog.h \
+    contact.h \
+    contactform.h \
+    contactitem.h \
+    contactsdialog.h \
     rdvdialog.h \
-    uagenda.h
+    uagenda.h \
+    ./../src/date.h \
+    ./../src/error.h \
+    ./../src/heure.h \
+    ./../src/personne.h \
+    ./../src/lpersonne.h \
+    ./../src/rdv.h \
+    ./../src/lrdv.h
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
