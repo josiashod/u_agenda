@@ -121,7 +121,12 @@ bool personne::contient(std::string& str) const
 {
     std::size_t trouvee;
 
-    trouvee = nomComplet().find(str);
+    std::string nomcomplet = nomComplet();
+
+    std::transform(nomcomplet.begin(), nomcomplet.end(), nomcomplet.begin(), ::tolower);
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+
+    trouvee = nomcomplet.find(str);
     return (trouvee != std::string::npos);
 }
 
