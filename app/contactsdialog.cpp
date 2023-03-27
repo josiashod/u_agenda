@@ -16,11 +16,13 @@
 
 ContactsDialog::ContactsDialog(LPersonne *contacts, QWidget *parent) :
     QDialog(parent),
+    d_order{"ASC"},
     d_contacts_default{contacts},
     d_contacts{contacts}
 {
     creerInterface();
     afficherContacts();
+    afficherOrderButton();
 }
 
 ContactsDialog::~ContactsDialog()
@@ -56,12 +58,21 @@ void ContactsDialog::creerInterface()
     main->addLayout(header, 0);
     titre->setStyleSheet("QLabel { font-weight: bold; }");
 
+    auto ligne{new QHBoxLayout()};
+
     d_recherche = new QLineEdit();
     d_recherche->setPlaceholderText("Rechercher un contact");
-    main->addWidget(d_recherche, 0, Qt::AlignTop);
+    ligne->addWidget(d_recherche, 1);
+
+    d_order_btn = new QPushButton("");
+    d_order_btn->setAutoDefault(false);
+    ligne->addWidget(d_order_btn, 0, Qt::AlignRight);
+
+    main->addLayout(ligne, 0);
     main->addWidget(d_list_contacts, 55);
 
     connect(d_recherche, &QLineEdit::textEdited, this, &ContactsDialog::onRecherche);
+    connect(d_order_btn, &QPushButton::clicked, this, &ContactsDialog::onOrder);
 }
 
 void ContactsDialog::afficherContacts()
@@ -70,7 +81,12 @@ void ContactsDialog::afficherContacts()
 
     if(d_contacts && d_contacts->tete())
     {
-        personne *crt = d_contacts->tete();
+        personne *crt;
+
+        if(d_order == "ASC")
+            crt = d_contacts->tete();
+        else
+            crt = d_contacts->queue();
 
         while(crt)
         {
@@ -85,7 +101,11 @@ void ContactsDialog::afficherContacts()
 
             d_list_contacts->addItem(item);
             d_list_contacts->setItemWidget(item, contact);
-            crt = crt->suivant();
+
+            if(d_order == "ASC")
+                crt = crt->suivant();
+            else
+                crt = crt->precedent();
         }
     }
     else
@@ -95,6 +115,20 @@ void ContactsDialog::afficherContacts()
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
         item->setTextAlignment(Qt::AlignCenter);
         d_list_contacts->addItem(item);
+    }
+}
+
+void ContactsDialog::afficherOrderButton()
+{
+    if(d_order == "ASC")
+    {
+        d_order_btn->setToolTip("DESC");
+        d_order_btn->setIcon(QIcon(":/icons/sort-alpha-up.svg"));
+    }
+    else
+    {
+        d_order_btn->setToolTip("ASC");
+        d_order_btn->setIcon(QIcon(":/icons/sort-alpha-down.svg"));
     }
 }
 
@@ -208,4 +242,15 @@ void ContactsDialog::onExporter()
         QString message = QString::number(d_contacts->taille()) + " contacts exporté avec succès";
         QMessageBox{QMessageBox::Information, tr("Information"), message}.exec();
     }
+}
+
+void ContactsDialog::onOrder()
+{
+    if(d_order == "ASC")
+        d_order = "DESC";
+    else
+        d_order = "ASC";
+
+    afficherOrderButton();
+    afficherContacts();
 }

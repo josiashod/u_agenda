@@ -44,5 +44,7 @@
         <file>fonts/BarlowCondensed-Light.ttf</file>
         <file>fonts/BarlowCondensed-Medium.ttf</file>
         <file>fonts/BarlowCondensed-Regular.ttf</file>
+        <file>icons/sort-alpha-down.svg</file>
+        <file>icons/sort-alpha-up.svg</file>
     </qresource>
 </RCC>
