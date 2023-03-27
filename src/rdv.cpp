@@ -139,6 +139,11 @@ void rdv::supprimerParticipant(const personne& participant)
     d_participants->supprimer(participant.nomComplet());
 }
 
+rdv* rdv::suivant() const
+{
+    return d_suiv;
+}
+
 void rdv::save(std::ostream& ost) const
 {
     ost << "BEGIN:RDV" << std::endl;
