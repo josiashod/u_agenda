@@ -181,7 +181,6 @@ void LRdv::save(std::ostream& ost) const
 void LRdv::load(std::istream& ist)
 {
     std::string ligne{""};
-    int ist_pos;
 
     getline(ist, ligne);
     if (ligne != "BEGIN:LRDV")
