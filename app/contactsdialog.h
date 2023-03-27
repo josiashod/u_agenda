@@ -21,6 +21,8 @@ public:
     void onSupprimer(std::string nomComplet);
     void onRecherche(const QString &text);
     void clear();
+    void onExporter();
+    void onImporter();
 
 private:
     QLineEdit *d_recherche;

@@ -11,6 +11,8 @@
 #include <QFrame>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 ContactsDialog::ContactsDialog(LPersonne *contacts, QWidget *parent) :
     QDialog(parent),
@@ -42,6 +44,9 @@ void ContactsDialog::creerInterface()
     btnImporter->setAutoDefault(false);
     btnExporter->setAutoDefault(false);
 
+    connect(btnExporter, &QPushButton::clicked, this, &ContactsDialog::onExporter);
+    connect(btnImporter, &QPushButton::clicked, this, &ContactsDialog::onImporter);
+
     header->addWidget(titre, 1, Qt::AlignLeft);
     header->addWidget(btnImporter, 0, Qt::AlignRight);
     header->addWidget(btnExporter, 0, Qt::AlignRight);
@@ -55,6 +60,7 @@ void ContactsDialog::creerInterface()
     d_recherche->setPlaceholderText("Rechercher un contact");
     main->addWidget(d_recherche, 0, Qt::AlignTop);
     main->addWidget(d_list_contacts, 55);
+
     connect(d_recherche, &QLineEdit::textEdited, this, &ContactsDialog::onRecherche);
 }
 
@@ -113,7 +119,7 @@ void ContactsDialog::onSupprimer(std::string nomComplet)
 {
     d_contacts_default->supprimer(nomComplet);
 
-    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été supprimé avec succès")}.exec();
+//    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été supprimé avec succès")}.exec();
 
     if(d_recherche->text().length() > 0)
         clear();
@@ -139,5 +145,67 @@ void ContactsDialog::onRecherche(const QString &text)
     else
     {
         clear();
+    }
+}
+
+void ContactsDialog::onImporter()
+{
+    QString directory = QDir::homePath();
+
+    directory += "/" + QStandardPaths::displayName(QStandardPaths::DocumentsLocation) + "/";
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+            tr("Importer des contacts"),
+            directory,
+            tr("VCard files(*.vcf *vcard)"), nullptr, QFileDialog::ReadOnly);
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(this, tr("Impossible d'ouvrir le fichier"),
+            file.errorString());
+        return;
+    }
+
+    int taille = d_contacts_default->taille();
+
+    d_contacts_default->importerDepuis(fileName.toStdString());
+
+    if(d_recherche->text().length() > 0)
+        clear();
+    else
+    {
+        d_contacts = d_contacts_default;
+        afficherContacts();
+    }
+
+    QString message = QString::number(d_contacts_default->taille() - taille) + " contacts importé avec succès";
+    QMessageBox{QMessageBox::Information, tr("Information"), message}.exec();
+}
+
+void ContactsDialog::onExporter()
+{
+    QString directory = QDir::homePath();
+    QLocale locale = QLocale();
+
+    directory += "/" + QStandardPaths::displayName(QStandardPaths::DocumentsLocation) + "/";
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+            tr("Sauvegarde des contacts"),
+            directory + "UAGENDA_CONTACTS_" + locale.toString(QDate::currentDate(), "dd-MM-yyyy") + ".vcf",
+            tr("VCard files(*.vcf *vcard)"));
+
+    if (fileName.isEmpty())
+        return;
+    else
+    {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, tr("Impossible d'ouvrir le fichier"),
+                file.errorString());
+            return;
+        }
+        d_contacts->exporterDans(fileName.toStdString());
+        QString message = QString::number(d_contacts->taille()) + " contacts exporté avec succès";
+        QMessageBox{QMessageBox::Information, tr("Information"), message}.exec();
     }
 }
