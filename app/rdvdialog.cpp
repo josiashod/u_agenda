@@ -1,62 +1,23 @@
 #include "rdvdialog.h"
+#include "rdvitem.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
 #include <QPushButton>
-#include <QFrame>
 #include <QListWidget>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QStandardPaths>
 
 
-Rdv::Rdv(QWidget *parent, QString nomComplet) :
-    QWidget(parent)
-  , d_nomComplet{nomComplet}
-{
-    creerInterface();
-}
-
-Rdv::~Rdv()
-{
-}
-
-void Rdv::creerInterface()
-{
-    auto ligne{new QHBoxLayout()};
-
-    auto info{new QVBoxLayout()};
-    info->setSpacing(5);
-
-    auto details{new QLabel("27 Férvier 2023 de 18h30 à 20h00")};
-    details->setStyleSheet("QLabel {font-weight: 4; font-size: 13px}");
-
-    info->addWidget(new QLabel(d_nomComplet), 0);
-    info->addWidget(details, 0);
-
-    ligne->addLayout(info, 1);
-
-    auto btnAffiche{new QPushButton(QIcon(":/icons/eye.svg"), "")};
-    btnAffiche->setAutoDefault(false);
-
-    auto btnModifier{new QPushButton(QIcon(":/icons/pencil-square.svg"), "")};
-    btnModifier->setAutoDefault(false);
-
-    auto btnSupprimer{new QPushButton(QIcon(":/icons/trash.svg"), "")};
-    btnSupprimer->setAutoDefault(false);
-
-    ligne->addWidget(btnAffiche, 0, Qt::AlignRight|Qt::AlignCenter);
-    ligne->addWidget(btnModifier, 0, Qt::AlignRight|Qt::AlignCenter);
-    ligne->addWidget(btnSupprimer, 0, Qt::AlignRight|Qt::AlignCenter);
-
-    setLayout(ligne);
-}
-
-
-RdvDialog::RdvDialog(QWidget *parent, QString titre) :
+RdvDialog::RdvDialog(QString titre, LRdv *rdvs, QWidget *parent) :
     QDialog(parent)
   , d_titre{titre}
+  , d_rdvs{rdvs}
 {
     creerInterface();
+    afficherRdvs();
 }
 
 RdvDialog::~RdvDialog()
@@ -69,24 +30,74 @@ void RdvDialog::creerInterface()
     setMinimumSize(450, 652);
 
     auto main{new QVBoxLayout(this)};
-    auto rdvs{new QListWidget()};
+    d_list_rdvs = new QListWidget();
 
     auto btnExporter{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
     btnExporter->setAutoDefault(false);
 
+    connect(btnExporter, &QPushButton::clicked, this, &RdvDialog::onExporter);
+
     main->addWidget(btnExporter, 0, Qt::AlignRight);
 
-    main->addWidget(rdvs, 1);
+    main->addWidget(d_list_rdvs, 1);
+}
 
-    for(int i = 0; i < 10; i++)
+void RdvDialog::afficherRdvs()
+{
+    d_list_rdvs->clear();
+
+    if(d_rdvs && d_rdvs->tete())
     {
-        auto item{new QListWidgetItem()};
+        rdv *crt = d_rdvs->tete();
+
+        while(crt)
+        {
+            auto item{new QListWidgetItem()};
+            item->setSizeHint(QSize(0, 60));
+            item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+
+            auto r{new RdvItem{*crt}};
+
+            d_list_rdvs->addItem(item);
+            d_list_rdvs->setItemWidget(item, r);
+            crt = crt->suivant();
+        }
+    }
+    else
+    {
+        auto item{new QListWidgetItem("Aucun rendez-vous")};
         item->setSizeHint(QSize(0, 60));
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+        item->setTextAlignment(Qt::AlignCenter);
+        d_list_rdvs->addItem(item);
+    }
+}
 
-        auto rdv{new Rdv{nullptr, "Rdv N°" + QString::number(i)}};
+void RdvDialog::onExporter()
+{
+    QString directory = QDir::homePath();
+    QLocale locale = QLocale();
 
-        rdvs->addItem(item);
-        rdvs->setItemWidget(item, rdv);
+    directory += "/" + QStandardPaths::displayName(QStandardPaths::DocumentsLocation) + "/";
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+            tr("Sauvegarde de l'agenda"),
+            directory + "UAGENDA_" + locale.toString(QDate::currentDate(), "dd-MM-yyyy") + ".ics",
+            tr("iCalendar files(*.ics *ifb *.iCal *.icalendar)"));
+
+    if (fileName.isEmpty())
+            return;
+    else
+    {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::information(this, tr("Impossible d'ouvrir le fichier"),
+                file.errorString());
+            return;
+        }
+
+        d_rdvs->exporterDans(fileName.toStdString());
+        QString message = "Les rendez-vous ont été exporté avec succès";
+        QMessageBox{QMessageBox::Information, tr("Information"), message}.exec();
     }
 }

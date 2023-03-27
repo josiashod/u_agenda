@@ -32,18 +32,48 @@ UAgenda::UAgenda(QWidget *parent)
 
 UAgenda::~UAgenda()
 {
-    delete d_grille;
-    delete d_etiquetteDate;
-    delete d_calendrierWidget;
+//    delete d_grille;
+//    delete d_etiquetteDate;
+//    delete d_calendrierWidget;
     delete d_contacts;
+    delete d_rdvs;
 }
 
 void UAgenda::loadData()
 {
     d_contacts = new LPersonne();
-    d_contacts->ajouter("KAGEYAMA", "Tobio", "0609090909", "kageyama.tobio@uha.fr");
-    d_contacts->ajouter("SHOYO", "Hinata", "0609090909", "hinata.shoyo@uha.fr");
-    d_contacts->ajouter("ADAM", "Sandler", "0609090909", "sandler.adam@uha.fr");
+    personne p1{"KAGEYAMA", "Tobio", "0609090909", "kageyama.tobio@uha.fr"};
+    personne p2{"SHOYO", "Hinata", "0609090909", "hinata.shoyo@uha.fr"};
+    personne p3{"ALLMIGHT", "OneForAll", "0609090909", "sandler.adam@uha.fr"};
+    personne p4{"TOMURA", "Shigaraki", "0609090909", "sandler.adam@uha.fr"};
+
+    d_contacts->ajouter(p1);
+    d_contacts->ajouter(p2);
+    d_contacts->ajouter(p3);
+    d_contacts->ajouter(p4);
+
+    d_rdvs = new LRdv();
+    auto r1{rdv("Visite du parc", {30, 03, 2023}, {12, 30}, {14, 30},
+        "description", "localisation")};
+
+    auto r2{rdv("Sortie cinéma", {1, 04, 2023}, {12, 30}, {14, 30},
+        "description", "localisation")};
+
+    auto r3{rdv("Merde de tout", {2, 04, 2023}, {12, 30}, {14, 30},
+        "description", "localisation")};
+
+    r1.ajouterParticipant(p1);
+    r1.ajouterParticipant(p2);
+
+    r2.ajouterParticipant(p3);
+    r2.ajouterParticipant(p4);
+
+    r3.ajouterParticipant(p3);
+    r3.ajouterParticipant(p4);
+
+    d_rdvs->ajouter(r1);
+    d_rdvs->ajouter(r2);
+    d_rdvs->ajouter(r3);
 }
 
 void UAgenda::setPolice()
@@ -211,7 +241,25 @@ void UAgenda::afficheCalendrier()
 
         d_grille->addWidget(vligne, row, col - 1, Qt::AlignRight);
         d_grille->addWidget(button, row, col - 1, Qt::AlignTop);
+
+        LRdv *rdvs = d_rdvs->trouverParDate({date.day(), date.month(), date.year()});
+        if(rdvs && rdvs->tete())
+        {
+            rdv *crt = rdvs->tete();
+            for(int i = 0; i < 5 && crt; i++)
+            {
+                auto rdvBtn{new QPushButton(QString::fromStdString(crt->nom()))};
+                rdvBtn->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
+                    "width: 100%; background-color: #308CC6}");
+
+                d_grille->addWidget(rdvBtn, row, col - 1);
+                crt = crt->suivant();
+            }
+            delete rdvs;
+        }
+
         d_grille->addWidget(hligne, row, col - 1, Qt::AlignBottom);
+
         if (col == 7)
         {
             ++row;
@@ -271,7 +319,7 @@ void UAgenda::onAfficheContact()
 
 void UAgenda::onRechercheRdv()
 {
-    auto rdvDialog{new RdvDialog(this, "Resultat de \"Test\"")};
+    auto rdvDialog{new RdvDialog("Resultat de \"Test\"", d_rdvs, this)};
 
     rdvDialog->setModal(true);
     rdvDialog->show();
@@ -289,7 +337,7 @@ void UAgenda::onAfficheRdvsJour()
     titre += ((mois < 10) ? "0" : "") + QString::number(mois) + "/";
     titre += QString::number(annee);
 
-    auto rdvDialog{new RdvDialog(this, titre)};
+    auto rdvDialog{new RdvDialog(titre, d_rdvs, this)};
 
     rdvDialog->setModal(true);
     rdvDialog->show();

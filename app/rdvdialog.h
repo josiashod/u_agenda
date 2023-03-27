@@ -2,34 +2,27 @@
 #define RDVDIALOG_H
 
 #include <QDialog>
+#include "./../src/lrdv.h"
 
-class QLineEdit;
-
-class Rdv: public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit Rdv(QWidget *parent = nullptr, QString nomComplet = "");
-    ~Rdv();
-    void creerInterface();
-
-private:
-    QString d_nomComplet;
-    QString d_numero;
-};
+class QListWidget;
 
 class RdvDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit RdvDialog(QWidget *parent = nullptr, QString titre= "Liste Rdvs");
+    explicit RdvDialog(QString titre= "Liste Rdvs", LRdv *rdvs = nullptr, QWidget *parent = nullptr);
     ~RdvDialog();
     void creerInterface();
+    void afficherRdvs();
+
+private slots:
+    void onExporter();
 
 private:
     QString d_titre;
+    LRdv *d_rdvs;
+    QListWidget *d_list_rdvs;
 };
 
 #endif // RDVDIALOG_H

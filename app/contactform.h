@@ -2,11 +2,11 @@
 #define CONTACTFORM_H
 
 #include <QDialog>
-#include <QLineEdit>
 
 #include "./../src/personne.h"
 
 class QLabel;
+class QLineEdit;
 
 class ContactForm : public QDialog
 {

@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QDate>
 #include "./../src/lpersonne.h"
+#include "./../src/lrdv.h"
 
 class QVBoxLayout;
 class QGridLayout;
@@ -47,6 +48,7 @@ private:
     QCalendarWidget *d_calendrierWidget;
     QLabel *d_etiquetteDate;
     LPersonne *d_contacts;
+    LRdv *d_rdvs;
 //    ContactDialog *contactDialog;
 };
 #endif // UAGENDA_H

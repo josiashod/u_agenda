@@ -15,6 +15,8 @@ SOURCES += \
     contactsdialog.cpp \
     main.cpp \
     rdvdialog.cpp \
+    rdvform.cpp \
+    rdvitem.cpp \
     uagenda.cpp \
     ./../src/date.cpp \
     ./../src/heure.cpp \
@@ -30,6 +32,8 @@ HEADERS += \
     contactitem.h \
     contactsdialog.h \
     rdvdialog.h \
+    rdvform.h \
+    rdvitem.h \
     uagenda.h \
     ./../src/date.h \
     ./../src/error.h \
