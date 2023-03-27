@@ -174,7 +174,7 @@ void personne::importer(std::istream& ist)
     if (ligne != "BEGIN:VCARD")
         return;
 
-    while(!ist.eof() || ligne != "END:VCARD")
+    while(!ist.eof() && ligne != "END:VCARD")
     {
         // On recupere le nom et le prenom
         if (ligne.substr(0, 2) == "N:")
@@ -199,7 +199,6 @@ void personne::importer(std::istream& ist)
 
         ist >> ligne;
     }
-
 }
 
 
