@@ -191,17 +191,17 @@ std::string timestamp(date d, heure h)
     std::string tz{""};
 
     tz += std::to_string(d.annee());
-    tz += ((d.mois() < 10) ? "0" : "") + std::to_string(d.mois());
-    tz += ((d.jour() < 10) ? "0" : "") + std::to_string(d.jour()) + "T";
-    tz += ((h.h() < 10) ? "0" : "") + std::to_string(h.h());
-    tz += ((h.mn() < 10) ? "0" : "") + std::to_string(h.mn()) + "00Z";
+    tz += std::to_string(d.mois());
+    tz += std::to_string(d.jour()) + "T";
+    tz += std::to_string(h.h());
+    tz += std::to_string(h.mn()) + "00Z";
 
     return tz;
 }
 
 void rdv::exporter(std::ostream& ost) const
 {
-    ost << "BEGIN:VEVENT" << std::endl;
+    ost << "BEGIN:EVENT" << std::endl;
     ost << "DTSTART:" << timestamp(d_date, d_horaires[0]) << std::endl;
     ost << "DTEND:" << timestamp(d_date, d_horaires[1]) << std::endl;
     ost << "SUMMARY:" << d_nom << std::endl;
@@ -217,7 +217,7 @@ void rdv::exporter(std::ostream& ost) const
     }
     ost << std::endl;
     ost << "LOCATION:" << d_localisation << std::endl;
-    ost << "END:VEVENT" << std::endl;
+    ost << "END:EVENT" << std::endl;
 }
 
 bool rdv::estAvant(const rdv& r) const
@@ -251,7 +251,7 @@ bool rdv::overlap(const rdv& r) const
     if (!(d_date == r.d_date))
         return false;
 
-    if(h_debut().estEntre(r.h_debut(), r.h_fin()) 
+    if(h_debut().estEntre(r.h_debut(), r.h_fin())
     || r.h_fin().estEntre(r.h_debut(), r.h_fin()))
         return true;
 
@@ -259,6 +259,19 @@ bool rdv::overlap(const rdv& r) const
         return true;
 
     return false;
+}
+
+bool rdv::contient(std::string& str) const
+{
+    std::size_t trouvee;
+
+    std::string nom = d_nom;
+
+    std::transform(nom.begin(), nom.end(), nom.begin(), ::tolower);
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+
+    trouvee = nom.find(str);
+    return (trouvee != std::string::npos);
 }
 
 bool rdv::operator>(const rdv& r){

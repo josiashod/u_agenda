@@ -33,6 +33,7 @@ class LRdv
         void exporter(std::ostream& ost, const rdv& r) const; // exporte un seul rendez-vous
         void save(std::ostream& ost) const;
         void load(std::istream& ist);
+        LRdv* rechercherPlusieurs(std::string str) const;
 
     private:
         rdv *d_tete;

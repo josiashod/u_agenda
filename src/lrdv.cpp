@@ -91,6 +91,25 @@ LRdv* LRdv::trouverParPersonne(const personne& p) const
 	return (lr);
 }
 
+LRdv* LRdv::rechercherPlusieurs(std::string str) const
+{
+    LRdv *lr = new LRdv{};
+
+    rdv *crt = d_tete;
+
+    while(crt)
+    {
+        if (crt->contient(str))
+        {
+            auto r{rdv{*crt}};
+            lr->ajouter(r);
+        }
+        crt = crt->d_suiv;
+    }
+
+    return (lr);
+}
+
 bool LRdv::overlap(const personne& p, const date& d
 	, const heure& h)
 {
@@ -121,7 +140,7 @@ void LRdv::supprimer(std::string nom)
 
 	if(crt->d_nom == nom){
 		d_tete = crt->d_suiv;
-		delete crt;	
+		delete crt;
 	}
 
     while(crt->d_suiv && nom != crt->d_suiv->d_nom)
@@ -140,7 +159,7 @@ void LRdv::exporter(std::ostream& ost) const
 	ost << "BEGIN:VCALENDAR" << std::endl;
 	ost << "VERSION:2.0" << std::endl;
 	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
-	
+
 	rdv *crt = d_tete;
     while(crt != nullptr)
     {
@@ -156,7 +175,7 @@ void LRdv::exporter(std::ostream& ost, const rdv& r) const
 	ost << "BEGIN:VCALENDAR" << std::endl;
 	ost << "VERSION:2.0" << std::endl;
 	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
-	
+
 	r.exporter(ost);
 
 	ost << "END:VCALENDAR" << std::endl;
@@ -174,9 +193,9 @@ void LRdv::save(std::ostream& ost) const
 {
 	if(!d_tete)
 		return;
- 
+
     ost << "BEGIN:LRDV" << std::endl;
-    
+
     rdv *crt = d_tete;
     while(crt != nullptr)
     {

@@ -49,6 +49,7 @@ class rdv
         void exporter(std::ostream& ost) const;
         bool estAvant(const rdv& r) const;
         bool overlap(const rdv& r) const;
+        bool contient(std::string& str) const;
 
 
         bool operator>(const rdv& r);
