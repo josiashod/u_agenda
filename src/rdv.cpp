@@ -157,23 +157,25 @@ std::string timestamp(date d, heure h)
     std::string tz{""};
 
     tz += std::to_string(d.annee());
-    tz += std::to_string(d.mois());
-    tz += std::to_string(d.jour()) + "T";
-    tz += std::to_string(h.h());
-    tz += std::to_string(h.mn()) + "00Z";
+    tz += ((d.mois() < 10) ? "0" : "") + std::to_string(d.mois());
+    tz += ((d.jour() < 10) ? "0" : "") + std::to_string(d.jour()) + "T";
+    tz += ((h.h() < 10) ? "0" : "") + std::to_string(h.h());
+    tz += ((h.mn() < 10) ? "0" : "") + std::to_string(h.mn()) + "00Z";
 
     return tz;
 }
 
 void rdv::exporter(std::ostream& ost) const
 {
-    ost << "BEGIN:EVENT" << std::endl;
+    ost << "BEGIN:VEVENT" << std::endl;
     ost << "DTSTART:" << timestamp(d_date, d_horaires[0]) << std::endl;
     ost << "DTEND:" << timestamp(d_date, d_horaires[1]) << std::endl;
     ost << "SUMMARY:" << d_nom << std::endl;
-    ost << "DESCRIPTION:\\n\\n" << d_description << "\\n";
+    ost << "DESCRIPTION:\\n\\n" << d_description;
 
-    personne *crt = d_participants->tete();
+    personne *crt = (d_participants) ? d_participants->tete() : nullptr;
+    if (crt)
+        ost << "\\n";
     while(crt)
     {
         ost << crt->nomComplet() << "\\n";
@@ -181,7 +183,7 @@ void rdv::exporter(std::ostream& ost) const
     }
     ost << std::endl;
     ost << "LOCATION:" << d_localisation << std::endl;
-    ost << "END:EVENT" << std::endl;
+    ost << "END:VEVENT" << std::endl;
 }
 
 bool rdv::estAvant(const rdv& r) const
