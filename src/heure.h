@@ -13,6 +13,7 @@ class heure
         unsigned int mn() const;
         void seth(unsigned int h);
         void setmn(unsigned int mn);
+        std::string toString() const;
 
         void affiche(std::ostream& ost) const;
         friend std::ostream& operator<<(std::ostream& ost, const heure& h);

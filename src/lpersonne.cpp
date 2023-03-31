@@ -174,7 +174,9 @@ int LPersonne::supprimer(std::string nomComplet)
     if(!as)
         return (ERR_NOT_FOUND);
 
-    if(as == d_tete)
+    if (!as->d_prec && !as->d_suiv)
+        d_tete = nullptr;
+    else if(as == d_tete)
     {
         d_tete = as->d_suiv;
         d_tete->d_prec = nullptr;
@@ -230,6 +232,8 @@ int LPersonne::supprimer(const personne& p)
     }
 
     d_taille--;
+    if(!d_taille)
+        d_tete = nullptr;
     delete as;
 
     return (OK);

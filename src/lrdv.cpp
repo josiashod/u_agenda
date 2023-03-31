@@ -2,6 +2,7 @@
 #include "lpersonne.h"
 #include "date.h"
 #include "heure.h"
+#include <fstream>
 
 LRdv::LRdv(): d_tete{nullptr}
 {}
@@ -161,6 +162,14 @@ void LRdv::exporter(std::ostream& ost, const rdv& r) const
 	ost << "END:VCALENDAR" << std::endl;
 }
 
+void LRdv::exporterDans(const std::string fichier) const
+{
+    std::ofstream oft{fichier};
+
+    exporter(oft);
+    oft.close();
+}
+
 void LRdv::save(std::ostream& ost) const
 {
 	if(!d_tete)
@@ -181,7 +190,6 @@ void LRdv::save(std::ostream& ost) const
 void LRdv::load(std::istream& ist)
 {
     std::string ligne{""};
-    int ist_pos;
 
     getline(ist, ligne);
     if (ligne != "BEGIN:LRDV")
