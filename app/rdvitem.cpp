@@ -1,8 +1,10 @@
 #include "rdvitem.h"
+#include "rendezvous.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QMessageBox>
 #include <QLabel>
 #include <QDate>
 
@@ -49,9 +51,43 @@ void RdvItem::creerInterface()
     auto btnSupprimer{new QPushButton(QIcon(":/icons/trash.svg"), "")};
     btnSupprimer->setAutoDefault(false);
 
+    connect(btnAffiche, &QPushButton::clicked, this, &RdvItem::onAfficher);
+ //   connect(btnModifier, &QPushButton::clicked, this, &RdvItem::onAfficherFormModif);
+    connect(btnSupprimer, &QPushButton::clicked, this, &RdvItem::onSupprimer);
+
+
     ligne->addWidget(btnAffiche, 0, Qt::AlignRight|Qt::AlignCenter);
     ligne->addWidget(btnModifier, 0, Qt::AlignRight|Qt::AlignCenter);
     ligne->addWidget(btnSupprimer, 0, Qt::AlignRight|Qt::AlignCenter);
 
+
     setLayout(ligne);
 }
+
+void RdvItem::onAfficher()
+{
+    auto r{new Rdv(&d_rdv)};
+    r->setModal(true);
+    r->show();
+}
+
+void RdvItem::onModifier(rdv ancien, rdv nouveau)
+{
+    emit updated(ancien, nouveau);
+}
+
+void RdvItem::onSupprimer()
+{
+    auto choice = QMessageBox{QMessageBox::Critical, tr("Suppression"), tr("Voulez-vous vraiment supprimer ce rendez-vous"), QMessageBox::No|QMessageBox::Yes}.exec();
+
+    if (choice == QMessageBox::Yes)
+        emit deleted(d_rdv.nom());
+}
+
+/* void RdvItem::onAfficherFormModif()
+{
+    auto form {new RdvForm(d_rdv)};
+    form->setModal(true);
+    connect(form, &RdvForm::updatePersonne, this, &RdvForm::onModifier);
+    form->exec();
+} */
