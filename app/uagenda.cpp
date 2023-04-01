@@ -4,6 +4,7 @@
 #include "contactform.h"
 #include "event.h"
 
+#include <fstream>
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -33,9 +34,7 @@ UAgenda::UAgenda(QWidget *parent)
 
 UAgenda::~UAgenda()
 {
-//    delete d_grille;
-//    delete d_etiquetteDate;
-//    delete d_calendrierWidget;
+    saveData();
     delete d_contacts;
     delete d_rdvs;
 }
@@ -43,38 +42,24 @@ UAgenda::~UAgenda()
 void UAgenda::loadData()
 {
     d_contacts = new LPersonne();
-    personne p1{"KAGEYAMA", "Tobio", "0609090909", "kageyama.tobio@uha.fr"};
-    personne p2{"SHOYO", "Hinata", "0609090909", "hinata.shoyo@uha.fr"};
-    personne p3{"ALLMIGHT", "OneForAll", "0609090909", "sandler.adam@uha.fr"};
-    personne p4{"TOMURA", "Shigaraki", "0609090909", "sandler.adam@uha.fr"};
-
-    d_contacts->ajouter(p1);
-    d_contacts->ajouter(p2);
-    d_contacts->ajouter(p3);
-    d_contacts->ajouter(p4);
-
     d_rdvs = new LRdv();
-    auto r1{rdv("Visite du parc", {30, 03, 2023}, {12, 30}, {14, 30},
-        "description", "localisation")};
 
-    auto r2{rdv("Sortie cinéma", {1, 04, 2023}, {12, 30}, {14, 30},
-        "description", "localisation")};
+    std::ifstream psifs(CONTACTLOGS);
+    std::ifstream esifs(EVENTLOGS);
 
-    auto r3{rdv("Merde de tout", {2, 04, 2023}, {12, 30}, {14, 30},
-        "description", "localisation")};
+    d_contacts->load(psifs);
+    d_rdvs->load(esifs);
+}
 
-    r1.ajouterParticipant(p1);
-    r1.ajouterParticipant(p2);
+void UAgenda::saveData()
+{
+    std::ofstream psofs(CONTACTLOGS);
+    std::ofstream esofs(EVENTLOGS);
 
-    r2.ajouterParticipant(p3);
-    r2.ajouterParticipant(p4);
-
-    r3.ajouterParticipant(p3);
-    r3.ajouterParticipant(p4);
-
-    d_rdvs->ajouter(r1);
-    d_rdvs->ajouter(r2);
-    d_rdvs->ajouter(r3);
+    if (d_contacts && d_contacts->tete())
+        d_contacts->save(psofs);
+    if (d_rdvs && d_rdvs->tete())
+        d_rdvs->save(esofs);
 }
 
 void UAgenda::setPolice()
