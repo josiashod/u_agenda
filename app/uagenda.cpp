@@ -95,6 +95,7 @@ void UAgenda::creerInterface()
     setWindowIcon(QIcon(":/logo/"+ QString::number(d_currentDate.day()) +".png"));
     setMinimumSize(1650, 830);
     setPolice();
+//    setShortcutEnabled();
 
     auto main{new QVBoxLayout(this)};
 
@@ -134,6 +135,8 @@ void UAgenda::creerInterface()
     connect(today_button, &QPushButton::clicked, this, &UAgenda::onReinitDate);
     connect(prev_button, &QPushButton::clicked, this, &UAgenda::onPrevMonth);
     connect(next_button, &QPushButton::clicked, this, &UAgenda::onNextMonth);
+    prev_button->setShortcut(QKeySequence(Qt::Key_Left));
+    next_button->setShortcut(QKeySequence(Qt::Key_Right));
 
 
     auto content{new QHBoxLayout()};
