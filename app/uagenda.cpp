@@ -2,7 +2,6 @@
 #include "rdvdialog.h"
 #include "contactsdialog.h"
 #include "contactform.h"
-#include "rdvitem.h"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -19,8 +18,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>
-#include <QListWidget>
-#include <QListWidgetItem>
 
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
@@ -30,6 +27,7 @@ UAgenda::UAgenda(QWidget *parent)
     loadData();
     creerInterface();
     afficheDate();
+    creerGrille();
     afficheCalendrier();
 }
 
@@ -193,26 +191,8 @@ void UAgenda::afficheDate()
 }
 
 
-void UAgenda::rafraichirGrille()
+void UAgenda::creerGrille()
 {
-    QLayoutItem *child;
-    while ((child = d_grille->takeAt(0)) != nullptr)
-    {
-        delete child->widget(); // delete the widget
-        delete child;   // delete the layout item
-    }
-}
-
-void UAgenda::afficheCalendrier()
-{
-    rafraichirGrille();
-
-    int actual_day = 1;
-    QDate date{d_currentDate.year(), d_currentDate.month(), actual_day};
-    int row = 1;
-    d_grille->setRowStretch(row, 1);
-
-
     for (int day = 1; day <= 7; ++day)
     {
         d_grille->setColumnStretch(day - 1, 1);
@@ -227,48 +207,88 @@ void UAgenda::afficheCalendrier()
 
     d_grille->setVerticalSpacing(10);
 
+    for(int i = 1; i < 7; i++)
+    {
+        d_grille->setRowStretch(i, 1);
+
+        for(int j = 0; j < 7; j++)
+        {
+            auto vligne {new QFrame{}};
+            vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
+            auto hligne {new QFrame{}};
+            hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+
+            d_layouts_grille[((i - 1) * 7) + j] = new QVBoxLayout();
+            d_grille->addLayout(d_layouts_grille[((i - 1) * 7) + j], i, j, Qt::AlignTop);
+            d_grille->addWidget(hligne, i, j, Qt::AlignBottom);
+            d_grille->addWidget(vligne, i, j, Qt::AlignRight);
+
+            if(i == 6 && j == 1)
+            {
+                i = 7;
+                break;
+            }
+        }
+    }
+}
+
+void UAgenda::rafraichirGrille()
+{
+    for(int i = 0; i < 37; i++)
+    {
+        QLayoutItem *child;
+        while ((child = d_layouts_grille[i]->takeAt(0)) != nullptr)
+        {
+            delete child->widget(); // delete the widget
+            delete child;   // delete the layout item
+        }
+    }
+}
+
+void UAgenda::afficheCalendrier()
+{
+    rafraichirGrille();
+
+    int actual_day = 1;
+    QDate date{d_currentDate.year(), d_currentDate.month(), actual_day};
+    int row = 0;
+
     while(date.isValid())
     {
-//        #308CC6
         int col = date.dayOfWeek();
+        auto layout = d_layouts_grille[(row * 7) + (col - 1)];
+
         auto button{new QPushButton(QString::number(date.day()))};
         button->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
             "width: 100%;}");
 
         connect(button, &QPushButton::clicked, this, &UAgenda::onAfficheRdvsJour);
 
-        auto vligne {new QFrame{}};
-        vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
-        auto hligne {new QFrame{}};
-        hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+        layout->addWidget(button, Qt::AlignTop);
+        layout->setSpacing(3);
 
-        d_grille->addWidget(vligne, row, col - 1, Qt::AlignRight);
-        d_grille->addWidget(button, row, col - 1, Qt::AlignTop);
 
-        LRdv *rdvs = d_rdvs->trouverParDate({date.day(), date.month(), date.year()});
+        LRdv *rdvs = d_rdvs->trouverParDate({static_cast<unsigned int>(date.day()),
+            static_cast<unsigned int>(date.month()), static_cast<unsigned int>(date.year())});
+
         if(rdvs && rdvs->tete())
         {
             rdv *crt = rdvs->tete();
-            for(int i = 0; i < 5 && crt; i++)
+            for(int i = 0; i < 3 && crt; i++)
             {
                 auto rdvBtn{new QPushButton(QString::fromStdString(crt->nom()))};
                 rdvBtn->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
                     "width: 100%; background-color: #308CC6}");
 
-                d_grille->addWidget(rdvBtn, row, col - 1);
+                layout->addWidget(rdvBtn);
                 crt = crt->suivant();
             }
             delete rdvs;
         }
 
-        d_grille->addWidget(hligne, row, col - 1, Qt::AlignBottom);
-
-        if (col == 7)
-        {
-            ++row;
-            d_grille->setRowStretch(row, 1);
-        }
         ++actual_day;
+        if(col == 7)
+            row++;
         date.setDate(d_currentDate.year(), d_currentDate.month(), actual_day);
     }
 }
@@ -346,10 +366,14 @@ void UAgenda::onAfficheRdvsJour()
     titre += ((mois < 10) ? "0" : "") + QString::number(mois) + "/";
     titre += QString::number(annee);
 
-    auto rdvDialog{new RdvDialog(titre, d_rdvs, this)};
+    auto rdvs = d_rdvs->trouverParDate({static_cast<unsigned int>(jour),
+        static_cast<unsigned int>(mois), static_cast<unsigned int>(annee)});
+    auto rdvDialog{new RdvDialog(titre, rdvs, this)};
 
     rdvDialog->setModal(true);
     rdvDialog->show();
+
+    delete rdvs;
 }
 
 void UAgenda::onExportRdv()

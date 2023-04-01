@@ -24,6 +24,7 @@ public:
     void creerInterface();
     void setPolice();
     void afficheDate();
+    void creerGrille();
     void afficheCalendrier();
     void rafraichirGrille();
     void loadData();
@@ -45,7 +46,9 @@ public slots:
 
 private:
     QDate d_currentDate;
+    QVBoxLayout *d_calendrier;
     QGridLayout *d_grille;
+    QVBoxLayout *d_layouts_grille[37];
     QCalendarWidget *d_calendrierWidget;
     QLabel *d_etiquetteDate;
     LPersonne *d_contacts;

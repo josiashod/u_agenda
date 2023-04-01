@@ -26,10 +26,14 @@ void Contact::creerVue()
     main->addSpacing(15);
 
     main->addWidget(new QLabel{"Numéro:"});
-    main->addWidget(new QLabel{QString::fromStdString(d_personne->numero())});
+    auto numero{new QLabel{QString::fromStdString(d_personne->numero())}};
+    numero->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    main->addWidget(numero);
     main->addSpacing(15);
 
     main->addWidget(new QLabel{"Email:"});
-    main->addWidget(new QLabel{QString::fromStdString(d_personne->email())});
+    auto email{new QLabel{QString::fromStdString(d_personne->email())}};
+    email->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    main->addWidget(email);
     main->addSpacing(15);
 }

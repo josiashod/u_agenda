@@ -35,6 +35,9 @@ void RdvDialog::creerInterface()
     auto btnExporter{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
     btnExporter->setAutoDefault(false);
 
+    if(!d_rdvs->tete())
+        btnExporter->setDisabled(true);
+
     connect(btnExporter, &QPushButton::clicked, this, &RdvDialog::onExporter);
 
     main->addWidget(btnExporter, 0, Qt::AlignRight);
