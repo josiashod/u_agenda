@@ -219,7 +219,6 @@ void LRdv::load(std::istream& ist)
     {
         rdv *r{new rdv{}};
         ist >> *r;
-		std::cout << *r;
 
         if(!r->nom().empty())
             ajouter(*r);
