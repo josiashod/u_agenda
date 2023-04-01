@@ -12,7 +12,6 @@ class QGridLayout;
 class QLabel;
 class QComboBox;
 class QCalendarWidget;
-class QPushButton;
 // class ContactDialog;
 
 class UAgenda : public QWidget
@@ -25,7 +24,6 @@ public:
     void creerInterface();
     void setPolice();
     void afficheDate();
-    void creerGrille();
     void afficheCalendrier();
     void rafraichirGrille();
     void loadData();
@@ -37,7 +35,6 @@ public slots:
     void onPrevMonth();
     void onCalendrierChange(int year, int month);
     void onAfficheContact();
-    void onSearchBar(const QString &text);
     void onRechercheRdv();
     void onAfficheRdvsJour();
     void onExportRdv();
@@ -48,15 +45,13 @@ public slots:
 
 private:
     QDate d_currentDate;
-    QVBoxLayout *d_calendrier;
     QGridLayout *d_grille;
-    QVBoxLayout *d_layouts_grille[37];
     QCalendarWidget *d_calendrierWidget;
     QLabel *d_etiquetteDate;
     LPersonne *d_contacts;
     LRdv *d_rdvs;
     QLineEdit *d_search_in;
-    QPushButton *d_search_btn;
+    void supprimer(std::string nom);
 
 //    ContactDialog *contactDialog;
 };

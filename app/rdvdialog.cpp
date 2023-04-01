@@ -35,9 +35,6 @@ void RdvDialog::creerInterface()
     auto btnExporter{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
     btnExporter->setAutoDefault(false);
 
-    if(!d_rdvs->tete())
-        btnExporter->setDisabled(true);
-
     connect(btnExporter, &QPushButton::clicked, this, &RdvDialog::onExporter);
 
     main->addWidget(btnExporter, 0, Qt::AlignRight);
@@ -60,7 +57,6 @@ void RdvDialog::afficherRdvs()
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 
             auto r{new RdvItem{*crt}};
-
             d_list_rdvs->addItem(item);
             d_list_rdvs->setItemWidget(item, r);
             crt = crt->suivant();
