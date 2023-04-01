@@ -120,7 +120,8 @@ void LRdv::supprimer(std::string nom)
 
 	if(crt->d_nom == nom){
 		d_tete = crt->d_suiv;
-		delete crt;	
+		delete crt;
+		return;
 	}
 
     while(crt->d_suiv && nom != crt->d_suiv->d_nom)
