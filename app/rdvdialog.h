@@ -5,6 +5,7 @@
 #include "./../src/lrdv.h"
 
 class QListWidget;
+class QPushButton;
 
 class RdvDialog : public QDialog
 {
@@ -17,12 +18,18 @@ public:
     void afficherRdvs();
 
 private slots:
+    void onSupprimer(std::string nom);
     void onExporter();
+
+signals:
+    void updated(rdv ancien, rdv nouveau);
+    void deleted(std::string nom);
 
 private:
     QString d_titre;
     LRdv *d_rdvs;
     QListWidget *d_list_rdvs;
+    QPushButton *d_btn_exporter;
 };
 
 #endif // RDVDIALOG_H

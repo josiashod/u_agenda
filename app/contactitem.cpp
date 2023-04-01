@@ -60,7 +60,7 @@ void ContactItem::creerItem()
 
 void ContactItem::onAfficher()
 {
-    auto contact{new Contact(d_personne)};
+    auto contact{new Contact(d_personne, this)};
     contact->setModal(true);
     contact->show();
 }

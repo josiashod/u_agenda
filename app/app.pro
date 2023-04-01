@@ -13,6 +13,7 @@ SOURCES += \
     contactform.cpp \
     contactitem.cpp \
     contactsdialog.cpp \
+    event.cpp \
     main.cpp \
     rdvdialog.cpp \
     rdvform.cpp \
@@ -31,6 +32,7 @@ HEADERS += \
     contactform.h \
     contactitem.h \
     contactsdialog.h \
+    event.h \
     rdvdialog.h \
     rdvform.h \
     rdvitem.h \

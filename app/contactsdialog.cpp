@@ -27,6 +27,8 @@ ContactsDialog::ContactsDialog(LPersonne *contacts, QWidget *parent) :
 
 ContactsDialog::~ContactsDialog()
 {
+    if(d_contacts != d_contacts_default)
+        delete d_contacts;
 }
 
 void ContactsDialog::creerInterface()
@@ -177,9 +179,7 @@ void ContactsDialog::onRecherche(const QString &text)
         afficherContacts();
     }
     else
-    {
         clear();
-    }
 }
 
 void ContactsDialog::onImporter()
@@ -218,6 +218,9 @@ void ContactsDialog::onImporter()
 
 void ContactsDialog::onExporter()
 {
+    if (!d_contacts_default || !d_contacts_default->tete())
+        return;
+
     QString directory = QDir::homePath();
     QLocale locale = QLocale();
 

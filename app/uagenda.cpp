@@ -2,7 +2,7 @@
 #include "rdvdialog.h"
 #include "contactsdialog.h"
 #include "contactform.h"
-#include "rdvitem.h"
+#include "event.h"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -11,7 +11,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCalendarWidget>
-#include <QTextCursor>
 #include <QFrame>
 #include <QMenu>
 #include <QFontDatabase>
@@ -19,8 +18,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QStandardPaths>
-#include <QListWidget>
-#include <QListWidgetItem>
 
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
@@ -30,6 +27,7 @@ UAgenda::UAgenda(QWidget *parent)
     loadData();
     creerInterface();
     afficheDate();
+    creerGrille();
     afficheCalendrier();
 }
 
@@ -104,22 +102,25 @@ void UAgenda::creerInterface()
     auto header{new QHBoxLayout()};
     auto searchbar{new QHBoxLayout()};
     d_search_in = new QLineEdit();
-    auto search_button{new QPushButton(QIcon(":/icons/search.svg"), "")};
+    d_search_btn = new QPushButton(QIcon(":/icons/search.svg"), "");
+    d_search_btn->setEnabled(false);
     auto today_button{new QPushButton(tr("Aujourd'hui"))};
     auto prev_button{new QPushButton(QIcon(":/icons/caret-left.svg"), "")};
     auto next_button{new QPushButton(QIcon(":/icons/caret-right.svg"), "")};
     auto export_button{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
     export_button->setToolTip(tr("Exporter l'agenda"));
 
-    search_button->setStyleSheet("QPushButton { padding: 4.5px 3px; }");
+    d_search_btn->setStyleSheet("QPushButton { padding: 4.5px 3px; }");
     d_search_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
     d_search_in->setPlaceholderText("Chercher un évènement");
     searchbar->addWidget(d_search_in, 1);
-    searchbar->addWidget(search_button, 0, Qt::AlignCenter);
+    searchbar->addWidget(d_search_btn, 0, Qt::AlignCenter);
     searchbar->setSpacing(0);
 
     connect(export_button, &QPushButton::clicked, this, &UAgenda::onExportRdv);
-    connect(search_button, &QPushButton::clicked, this, &UAgenda::onRechercheRdv);
+    connect(d_search_btn, &QPushButton::clicked, this, &UAgenda::onRechercheRdv);
+    connect(d_search_in, &QLineEdit::textEdited, this, &UAgenda::onSearchBar);
+    connect(d_search_in, &QLineEdit::returnPressed, this, &UAgenda::onRechercheRdv);
 
     d_etiquetteDate = new QLabel{""};
     header->addWidget(d_etiquetteDate, 1);
@@ -193,26 +194,8 @@ void UAgenda::afficheDate()
 }
 
 
-void UAgenda::rafraichirGrille()
+void UAgenda::creerGrille()
 {
-    QLayoutItem *child;
-    while ((child = d_grille->takeAt(0)) != nullptr)
-    {
-        delete child->widget(); // delete the widget
-        delete child;   // delete the layout item
-    }
-}
-
-void UAgenda::afficheCalendrier()
-{
-    rafraichirGrille();
-
-    int actual_day = 1;
-    QDate date{d_currentDate.year(), d_currentDate.month(), actual_day};
-    int row = 1;
-    d_grille->setRowStretch(row, 1);
-
-
     for (int day = 1; day <= 7; ++day)
     {
         d_grille->setColumnStretch(day - 1, 1);
@@ -227,48 +210,89 @@ void UAgenda::afficheCalendrier()
 
     d_grille->setVerticalSpacing(10);
 
+    for(int i = 1; i < 7; i++)
+    {
+        d_grille->setRowStretch(i, 1);
+
+        for(int j = 0; j < 7; j++)
+        {
+            auto vligne {new QFrame{}};
+            vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
+            auto hligne {new QFrame{}};
+            hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+
+            d_layouts_grille[((i - 1) * 7) + j] = new QVBoxLayout();
+            d_grille->addLayout(d_layouts_grille[((i - 1) * 7) + j], i, j, Qt::AlignTop);
+            d_grille->addWidget(hligne, i, j, Qt::AlignBottom);
+            d_grille->addWidget(vligne, i, j, Qt::AlignRight);
+
+            if(i == 6 && j == 1)
+            {
+                i = 7;
+                break;
+            }
+        }
+    }
+}
+
+void UAgenda::rafraichirGrille()
+{
+    for(int i = 0; i < 37; i++)
+    {
+        QLayoutItem *child;
+        while ((child = d_layouts_grille[i]->takeAt(0)) != nullptr)
+        {
+            delete child->widget(); // delete the widget
+            delete child;   // delete the layout item
+        }
+    }
+}
+
+void UAgenda::afficheCalendrier()
+{
+    rafraichirGrille();
+
+    int actual_day = 1;
+    QDate date{d_currentDate.year(), d_currentDate.month(), actual_day};
+    int row = 0;
+
     while(date.isValid())
     {
-//        #308CC6
         int col = date.dayOfWeek();
+        auto layout = d_layouts_grille[(row * 7) + (col - 1)];
+
         auto button{new QPushButton(QString::number(date.day()))};
         button->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
             "width: 100%;}");
 
         connect(button, &QPushButton::clicked, this, &UAgenda::onAfficheRdvsJour);
 
-        auto vligne {new QFrame{}};
-        vligne->setFrameStyle(QFrame::VLine|QFrame::Sunken);
-        auto hligne {new QFrame{}};
-        hligne->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+        layout->addWidget(button, Qt::AlignTop);
+        layout->setSpacing(3);
 
-        d_grille->addWidget(vligne, row, col - 1, Qt::AlignRight);
-        d_grille->addWidget(button, row, col - 1, Qt::AlignTop);
 
-        LRdv *rdvs = d_rdvs->trouverParDate({date.day(), date.month(), date.year()});
+        LRdv *rdvs = d_rdvs->trouverParDate({static_cast<unsigned int>(date.day()),
+            static_cast<unsigned int>(date.month()), static_cast<unsigned int>(date.year())});
+
         if(rdvs && rdvs->tete())
         {
             rdv *crt = rdvs->tete();
-            for(int i = 0; i < 5 && crt; i++)
+            for(int i = 0; i < 3 && crt; i++)
             {
                 auto rdvBtn{new QPushButton(QString::fromStdString(crt->nom()))};
                 rdvBtn->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
-                    "width: 100%; background-color: #308CC6}");
+                    "width: 100%; background-color: #086BAB; color: #FFFFFF}");
 
-                d_grille->addWidget(rdvBtn, row, col - 1);
+                layout->addWidget(rdvBtn);
+                connect(rdvBtn, &QPushButton::clicked, this, &UAgenda::onAfficheRdv);
                 crt = crt->suivant();
             }
             delete rdvs;
         }
 
-        d_grille->addWidget(hligne, row, col - 1, Qt::AlignBottom);
-
-        if (col == 7)
-        {
-            ++row;
-            d_grille->setRowStretch(row, 1);
-        }
         ++actual_day;
+        if(col == 7)
+            row++;
         date.setDate(d_currentDate.year(), d_currentDate.month(), actual_day);
     }
 }
@@ -320,6 +344,11 @@ void UAgenda::onAfficheContact()
     contacts->show();
 }
 
+void UAgenda::onSearchBar(const QString &text)
+{
+    d_search_btn->setEnabled(text.length() > 0);
+}
+
 void UAgenda::onRechercheRdv()
 {
     if(d_search_in->text().length() > 0){
@@ -330,7 +359,7 @@ void UAgenda::onRechercheRdv()
 
         rdvDialog->setModal(true);
         rdvDialog->show();
-        delete tmp;
+        connect(rdvDialog, &RdvDialog::deleted, this, &UAgenda::onSupprimerRdv);
     }
 }
 
@@ -346,14 +375,27 @@ void UAgenda::onAfficheRdvsJour()
     titre += ((mois < 10) ? "0" : "") + QString::number(mois) + "/";
     titre += QString::number(annee);
 
-    auto rdvDialog{new RdvDialog(titre, d_rdvs, this)};
+    auto rdvs = d_rdvs->trouverParDate({static_cast<unsigned int>(jour),
+        static_cast<unsigned int>(mois), static_cast<unsigned int>(annee)});
+    auto rdvDialog{new RdvDialog(titre, rdvs, this)};
+
+    connect(rdvDialog, &RdvDialog::deleted, this, &UAgenda::onSupprimerRdv);
 
     rdvDialog->setModal(true);
     rdvDialog->show();
 }
 
+void UAgenda::onSupprimerRdv(std::string nom)
+{
+    d_rdvs->supprimer(nom);
+    afficheCalendrier();
+}
+
 void UAgenda::onExportRdv()
 {
+    if (!d_rdvs->tete())
+        return;
+
     QString directory = QDir::homePath();
     QLocale locale = QLocale();
 
@@ -399,6 +441,18 @@ void UAgenda::onAjouterContact(personne p)
     QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été ajouté avec succès")}.exec();
 }
 
-void UAgenda::supprimer(std::string nom){
-    d_rdvs->supprimer(nom);
+void UAgenda::onAfficheRdv()
+{
+    auto button{(QPushButton*)sender()};
+
+    auto rdv = d_rdvs->trouverUn(button->text().toStdString());
+
+    auto e{new Event(*rdv, this)};
+    connect(e, &Event::deleted, this, &UAgenda::onSupprimerRdv);
+    e->setModal(true);
+    e->exec();
 }
+
+// void UAgenda::supprimer(std::string nom){
+//     d_rdvs->supprimer(nom);
+// }

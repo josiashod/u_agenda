@@ -22,6 +22,7 @@ RdvDialog::RdvDialog(QString titre, LRdv *rdvs, QWidget *parent) :
 
 RdvDialog::~RdvDialog()
 {
+    delete d_rdvs;
 }
 
 void RdvDialog::creerInterface()
@@ -32,12 +33,14 @@ void RdvDialog::creerInterface()
     auto main{new QVBoxLayout(this)};
     d_list_rdvs = new QListWidget();
 
-    auto btnExporter{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
-    btnExporter->setAutoDefault(false);
+    d_btn_exporter = new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"));
+    d_btn_exporter->setAutoDefault(false);
 
-    connect(btnExporter, &QPushButton::clicked, this, &RdvDialog::onExporter);
+    d_btn_exporter->setDisabled(!d_rdvs->tete());
 
-    main->addWidget(btnExporter, 0, Qt::AlignRight);
+    connect(d_btn_exporter, &QPushButton::clicked, this, &RdvDialog::onExporter);
+
+    main->addWidget(d_btn_exporter, 0, Qt::AlignRight);
 
     main->addWidget(d_list_rdvs, 1);
 }
@@ -57,6 +60,8 @@ void RdvDialog::afficherRdvs()
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 
             auto r{new RdvItem{*crt}};
+
+            connect(r, &RdvItem::deleted, this, &RdvDialog::onSupprimer);
             d_list_rdvs->addItem(item);
             d_list_rdvs->setItemWidget(item, r);
             crt = crt->suivant();
@@ -70,6 +75,14 @@ void RdvDialog::afficherRdvs()
         item->setTextAlignment(Qt::AlignCenter);
         d_list_rdvs->addItem(item);
     }
+}
+
+void RdvDialog::onSupprimer(std::string nom)
+{
+    d_rdvs->supprimer(nom);
+    afficherRdvs();
+    d_btn_exporter->setDisabled(!d_rdvs->tete());
+    emit deleted(nom);
 }
 
 void RdvDialog::onExporter()

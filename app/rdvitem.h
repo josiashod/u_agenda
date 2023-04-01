@@ -19,12 +19,13 @@ public:
 private slots:
     void onAfficher();
 //    void onAfficherFormModif();
-    void onModifier(rdv ancien, rdv nouveau);
+//    void onModifier(rdv ancien, rdv nouveau);
     void onSupprimer();
 
 signals:
     void updated(rdv ancien, rdv nouveau);
     void deleted(std::string nom);
+
 private:
     rdv d_rdv;
 };

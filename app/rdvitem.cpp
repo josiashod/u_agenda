@@ -1,5 +1,5 @@
 #include "rdvitem.h"
-#include "rendezvous.h"
+#include "event.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -66,15 +66,16 @@ void RdvItem::creerInterface()
 
 void RdvItem::onAfficher()
 {
-    auto r{new Rdv(&d_rdv)};
+    auto r{new Event(d_rdv, this)};
+    connect(r, &Event::deleted, this, &RdvItem::onSupprimer);
     r->setModal(true);
     r->show();
 }
 
-void RdvItem::onModifier(rdv ancien, rdv nouveau)
-{
-    emit updated(ancien, nouveau);
-}
+//void RdvItem::onModifier(rdv ancien, rdv nouveau)
+//{
+//    emit updated(ancien, nouveau);
+//}
 
 void RdvItem::onSupprimer()
 {
