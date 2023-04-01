@@ -41,6 +41,7 @@ class rdv
         void setParticipants(LPersonne *participants);
         void ajouterParticipant(const personne& participant);
         void supprimerParticipant(const personne& participant);
+        rdv* suivant() const;
 
         //METHODES
         void save(std::ostream& ost) const;
