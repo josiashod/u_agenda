@@ -102,22 +102,24 @@ void UAgenda::creerInterface()
     auto header{new QHBoxLayout()};
     auto searchbar{new QHBoxLayout()};
     d_search_in = new QLineEdit();
-    auto search_button{new QPushButton(QIcon(":/icons/search.svg"), "")};
+    d_search_btn = new QPushButton(QIcon(":/icons/search.svg"), "");
+    d_search_btn->setEnabled(false);
     auto today_button{new QPushButton(tr("Aujourd'hui"))};
     auto prev_button{new QPushButton(QIcon(":/icons/caret-left.svg"), "")};
     auto next_button{new QPushButton(QIcon(":/icons/caret-right.svg"), "")};
     auto export_button{new QPushButton(QIcon(":/icons/export.svg"), tr("Exporter"))};
     export_button->setToolTip(tr("Exporter l'agenda"));
 
-    search_button->setStyleSheet("QPushButton { padding: 4.5px 3px; }");
+    d_search_btn->setStyleSheet("QPushButton { padding: 4.5px 3px; }");
     d_search_in->setStyleSheet("QLineEdit { padding: 2px 3px; }");
     d_search_in->setPlaceholderText("Chercher un évènement");
     searchbar->addWidget(d_search_in, 1);
-    searchbar->addWidget(search_button, 0, Qt::AlignCenter);
+    searchbar->addWidget(d_search_btn, 0, Qt::AlignCenter);
     searchbar->setSpacing(0);
 
     connect(export_button, &QPushButton::clicked, this, &UAgenda::onExportRdv);
-    connect(search_button, &QPushButton::clicked, this, &UAgenda::onRechercheRdv);
+    connect(d_search_btn, &QPushButton::clicked, this, &UAgenda::onRechercheRdv);
+    connect(d_search_in, &QLineEdit::textEdited, this, &UAgenda::onSearchBar);
 
     d_etiquetteDate = new QLabel{""};
     header->addWidget(d_etiquetteDate, 1);
@@ -278,7 +280,7 @@ void UAgenda::afficheCalendrier()
             {
                 auto rdvBtn{new QPushButton(QString::fromStdString(crt->nom()))};
                 rdvBtn->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
-                    "width: 100%; background-color: #308CC6}");
+                    "width: 100%; background-color: #086BAB; color: #FFFFFF}");
 
                 layout->addWidget(rdvBtn);
                 crt = crt->suivant();
@@ -338,6 +340,11 @@ void UAgenda::onAfficheContact()
 
     contacts->setModal(true);
     contacts->show();
+}
+
+void UAgenda::onSearchBar(const QString &text)
+{
+    d_search_btn->setEnabled(text.length() > 0);
 }
 
 void UAgenda::onRechercheRdv()
