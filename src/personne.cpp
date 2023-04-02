@@ -140,7 +140,7 @@ void personne::lire(std::istream &ist)
 {
     char c;
 
-    ist >> c >> d_nom >> d_prenom >> d_email >> d_numero;
+    ist >> c >> d_nom >> d_prenom >> d_numero >> d_email;
 
     d_nom = d_nom.substr(0, d_nom.length() - 1);
     d_prenom = d_prenom.substr(0, d_prenom.length() - 1);
