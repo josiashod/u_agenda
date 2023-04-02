@@ -90,6 +90,26 @@ LRdv* LRdv::trouverParPersonne(const personne& p) const
 	return (lr);
 }
 
+void LRdv::miseAJourParticipant(const personne& old, const personne& newp)
+{
+	rdv *crt = d_tete;
+
+	while(crt)
+	{
+		personne* p = d_participants->recherche(old.nomComplet());
+
+		if(p)
+		{
+			p->setNom(newp.nom());
+			p->setPrenom(newp.prenom());
+			p->setEmail(newp.email());
+			p->setNumero(newp.numero());
+		}
+
+		crt = crt->d_suiv;
+	}
+}
+
 bool LRdv::overlap(const personne& p, const date& d
 	, const heure& h)
 {

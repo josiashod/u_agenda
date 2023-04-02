@@ -25,6 +25,7 @@ class LRdv
         rdv* trouverUn(std::string nom) const;
         LRdv* trouverParDate(const date& d) const;
         LRdv* trouverParPersonne(const personne& p) const;
+        void miseAJourParticipant(const personne& old, const personne& newp);
         bool overlap(const personne& p, const date& d
         , const heure& h);
         void supprimer(std::string nom);
