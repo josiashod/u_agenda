@@ -250,8 +250,11 @@ void UAgenda::afficheCalendrier()
         auto layout = d_layouts_grille[(row * 7) + (col - 1)];
 
         auto button{new QPushButton(QString::number(date.day()))};
-        button->setStyleSheet("QPushButton { font-weight: bold; margin-right: 8px;"
-            "width: 100%;}");
+        QString stylesheet = "QPushButton { font-weight: bold; margin-right: 8px; width: 100%;";
+        stylesheet += ((date == QDate::currentDate()) ? "background-color: #0D9488;": "");
+        stylesheet += "}";
+
+        button->setStyleSheet(stylesheet);
 
         connect(button, &QPushButton::clicked, this, &UAgenda::onAfficheRdvsJour);
 
@@ -275,6 +278,9 @@ void UAgenda::afficheCalendrier()
                 connect(rdvBtn, &QPushButton::clicked, this, &UAgenda::onAfficheRdv);
                 crt = crt->suivant();
             }
+
+            if(crt)
+                layout->addWidget(new QLabel("..."));
             delete rdvs;
         }
 

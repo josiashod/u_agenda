@@ -214,6 +214,16 @@ bool personne::operator>(const personne& p) const
     return vientAvant(p);
 }
 
+personne &personne::operator=(const personne &p)
+{
+    d_nom = p.d_nom;
+    d_prenom = p.d_prenom;
+    d_email = p.d_email;
+    d_numero = p.d_numero;
+
+    return *this;
+}
+
 std::istream& operator>>(std::istream& ist, personne& p)
 {
     p.lire(ist);

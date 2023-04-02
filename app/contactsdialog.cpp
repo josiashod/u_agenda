@@ -139,10 +139,8 @@ void ContactsDialog::onModifier(personne oldPersonne, personne newPersonne)
 {
     personne *pers = d_contacts_default->rechercher(oldPersonne.nomComplet());
 
-    pers->setNom(newPersonne.nom());
-    pers->setPrenom(newPersonne.prenom());
-    pers->setNumero(newPersonne.numero());
-    pers->setEmail(newPersonne.email());
+    *pers = newPersonne;
+    d_rdvs->miseAJourParticipant(oldPersonne, newPersonne);
 
     QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été modifié avec succès")}.exec();
 

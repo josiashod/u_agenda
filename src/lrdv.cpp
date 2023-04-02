@@ -110,6 +110,21 @@ LRdv* LRdv::rechercherPlusieurs(std::string str) const
     return (lr);
 }
 
+void LRdv::miseAJourParticipant(const personne& old, const personne& newp)
+{
+	rdv *crt = d_tete;
+
+	while(crt)
+	{
+        personne* p = crt->d_participants->rechercher(old.nomComplet());
+
+		if(p)
+			*p = newp;
+
+		crt = crt->d_suiv;
+	}
+}
+
 bool LRdv::overlap(const personne& p, const date& d
 	, const heure& h)
 {
