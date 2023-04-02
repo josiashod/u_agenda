@@ -72,7 +72,8 @@ void ContactItem::onModifier(personne oldPersonne, personne newPersonne)
 
 void ContactItem::onSupprimer()
 {
-    auto choice = QMessageBox{QMessageBox::Critical, tr("Suppression"), tr("Voulez-vous vraiment supprimer ce ContactItem"), QMessageBox::No|QMessageBox::Yes}.exec();
+    auto choice = QMessageBox{QMessageBox::Critical, tr("Suppression"),
+        tr("Voulez-vous vraiment supprimer ce contact"), QMessageBox::No|QMessageBox::Yes, this}.exec();
 
     if (choice == QMessageBox::Yes)
         emit deleted(d_personne->nomComplet());

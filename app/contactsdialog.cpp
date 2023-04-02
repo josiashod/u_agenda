@@ -14,11 +14,12 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 
-ContactsDialog::ContactsDialog(LPersonne *contacts, QWidget *parent) :
+ContactsDialog::ContactsDialog(LPersonne *contacts, LRdv *rdvs, QWidget *parent) :
     QDialog(parent),
     d_order{"ASC"},
     d_contacts_default{contacts},
-    d_contacts{contacts}
+    d_contacts{contacts},
+    d_rdvs{rdvs}
 {
     creerInterface();
     afficherContacts();
@@ -153,14 +154,24 @@ void ContactsDialog::onModifier(personne oldPersonne, personne newPersonne)
 
 void ContactsDialog::onSupprimer(std::string nomComplet)
 {
-    d_contacts_default->supprimer(nomComplet);
+    LRdv *resultats = d_rdvs->trouverParPersonne(*d_contacts_default->rechercher(nomComplet));
 
-//    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été supprimé avec succès")}.exec();
-
-    if(d_recherche->text().length() > 0)
-        clear();
+    if(resultats && resultats->tete())
+    {
+        QMessageBox{QMessageBox::Critical, tr("Erreur"),
+            tr("Le contact que vous tenté de supprimé est dans un rendez-vous"), QMessageBox::Ok, this}.exec();
+    }
     else
-        afficherContacts();
+    {
+        d_contacts_default->supprimer(nomComplet);
+
+        if(d_recherche->text().length() > 0)
+            clear();
+        else
+            afficherContacts();
+    }
+
+    delete resultats;
 }
 
 void ContactsDialog::clear()

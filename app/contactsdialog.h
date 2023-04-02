@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "./../src/lpersonne.h"
+#include "./../src/lrdv.h"
 
 
 class QLineEdit;
@@ -14,7 +15,7 @@ class ContactsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ContactsDialog(LPersonne *contacts = nullptr, QWidget *parent = nullptr);
+    explicit ContactsDialog(LPersonne *contacts = nullptr, LRdv *rdvs = nullptr, QWidget *parent = nullptr);
     ~ContactsDialog();
     void creerInterface();
     void afficherContacts();
@@ -34,6 +35,7 @@ private:
     QString d_order;
     LPersonne *d_contacts_default;
     LPersonne *d_contacts;
+    LRdv *d_rdvs;
 };
 
 #endif // CONTACTSDIALOG_H

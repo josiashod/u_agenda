@@ -326,7 +326,7 @@ void UAgenda::onCalendrierChange(int year, int month)
 
 void UAgenda::onAfficheContact()
 {
-    auto contacts{new ContactsDialog(d_contacts, this)};
+    auto contacts{new ContactsDialog(d_contacts, d_rdvs, this)};
 
     contacts->setModal(true);
     contacts->show();
@@ -440,7 +440,3 @@ void UAgenda::onAfficheRdv()
     e->setModal(true);
     e->exec();
 }
-
-// void UAgenda::supprimer(std::string nom){
-//     d_rdvs->supprimer(nom);
-// }
