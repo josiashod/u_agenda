@@ -45,8 +45,8 @@ void ContactForm::createForm()
     d_email_erreur = new QLabel{""};
     d_email_erreur->setStyleSheet("QLabel{ color: #e11d48 }");
 
-    QRegularExpression nomRegx("[A-Z]+");
-    QRegularExpression prenomRegx("[A-Z].[a-z]+");
+    QRegularExpression nomRegx("([A-Za-z- ]+)+");
+    QRegularExpression prenomRegx("([A-Z]{1}[a-z]+ )+");
     QRegularExpression numRegx("(0|\\+33|0033)[1-9][0-9]{8}");
     QRegularExpression emailRegx("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b", QRegularExpression::CaseInsensitiveOption);
 
@@ -120,14 +120,14 @@ void ContactForm::afficheErreur()
 {
     if(!d_nom_input->text().length())
         d_nom_erreur->setText("Veuillez entrer un nom");
-    else if(d_nom_input->text().length() < 2)
+    else if(d_nom_input->text().length() <= 2)
         d_nom_erreur->setText("Le nom doit comporter au moins 3 caractères");
     else
         d_nom_erreur->setText("");
 
     if(!d_prenom_input->text().length())
         d_prenom_erreur->setText("Veuillez entrer un prénom");
-    else if(d_prenom_input->text().length() < 2)
+    else if(d_prenom_input->text().length() <= 2)
         d_prenom_erreur->setText("Le prenom doit comporter au moins 3 caractères");
     else
         d_prenom_erreur->setText("");
