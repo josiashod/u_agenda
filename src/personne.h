@@ -45,6 +45,7 @@ class personne
 
         bool operator==(const personne& p) const;
         bool operator>(const personne& p) const;
+        personne &operator=(const personne &p);
         friend std::istream& operator>>(std::istream& ist, personne& p);
         friend std::ostream& operator<<(std::ostream& ost, const personne& p);
 

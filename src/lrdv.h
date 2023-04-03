@@ -30,9 +30,11 @@ class LRdv
         , const heure& h);
         void supprimer(std::string nom);
         void exporter(std::ostream& ost) const; // exporte une liste de rendez-vous
+        void exporterDans(const std::string fichier) const;
         void exporter(std::ostream& ost, const rdv& r) const; // exporte un seul rendez-vous
         void save(std::ostream& ost) const;
         void load(std::istream& ist);
+        LRdv* rechercherPlusieurs(std::string str) const;
 
     private:
         rdv *d_tete;

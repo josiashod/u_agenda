@@ -139,6 +139,11 @@ void rdv::supprimerParticipant(const personne& participant)
     d_participants->supprimer(participant.nomComplet());
 }
 
+rdv* rdv::suivant() const
+{
+    return d_suiv;
+}
+
 void rdv::save(std::ostream& ost) const
 {
     ost << "BEGIN:RDV" << std::endl;
@@ -246,7 +251,7 @@ bool rdv::overlap(const rdv& r) const
     if (!(d_date == r.d_date))
         return false;
 
-    if(h_debut().estEntre(r.h_debut(), r.h_fin()) 
+    if(h_debut().estEntre(r.h_debut(), r.h_fin())
     || r.h_fin().estEntre(r.h_debut(), r.h_fin()))
         return true;
 
@@ -254,6 +259,19 @@ bool rdv::overlap(const rdv& r) const
         return true;
 
     return false;
+}
+
+bool rdv::contient(std::string& str) const
+{
+    std::size_t trouvee;
+
+    std::string nom = d_nom;
+
+    std::transform(nom.begin(), nom.end(), nom.begin(), ::tolower);
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+
+    trouvee = nom.find(str);
+    return (trouvee != std::string::npos);
 }
 
 bool rdv::operator>(const rdv& r){

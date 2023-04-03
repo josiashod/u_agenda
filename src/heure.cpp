@@ -28,6 +28,16 @@ void heure::setmn(unsigned int mn)
     d_mn = mn;
 }
 
+std::string heure::toString() const
+{
+    std::string str = "";
+
+    str += ((d_h < 10) ? "0" : "") + std::to_string(d_h) + ":";
+    str += ((d_mn < 10) ? "0" : "") + std::to_string(d_mn);
+
+    return (str);
+}
+
 void heure::affiche(std::ostream& ost) const
 {
     ost << d_h << ":" << d_mn << std::endl;

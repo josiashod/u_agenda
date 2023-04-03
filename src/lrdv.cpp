@@ -2,6 +2,7 @@
 #include "lpersonne.h"
 #include "date.h"
 #include "heure.h"
+#include <fstream>
 
 LRdv::LRdv(): d_tete{nullptr}
 {}
@@ -90,21 +91,35 @@ LRdv* LRdv::trouverParPersonne(const personne& p) const
 	return (lr);
 }
 
+LRdv* LRdv::rechercherPlusieurs(std::string str) const
+{
+    LRdv *lr = new LRdv{};
+
+    rdv *crt = d_tete;
+
+    while(crt)
+    {
+        if (crt->contient(str))
+        {
+            auto r{rdv{*crt}};
+            lr->ajouter(r);
+        }
+        crt = crt->d_suiv;
+    }
+
+    return (lr);
+}
+
 void LRdv::miseAJourParticipant(const personne& old, const personne& newp)
 {
 	rdv *crt = d_tete;
 
 	while(crt)
 	{
-		personne* p = d_participants->recherche(old.nomComplet());
+        personne* p = crt->d_participants->rechercher(old.nomComplet());
 
 		if(p)
-		{
-			p->setNom(newp.nom());
-			p->setPrenom(newp.prenom());
-			p->setEmail(newp.email());
-			p->setNumero(newp.numero());
-		}
+			*p = newp;
 
 		crt = crt->d_suiv;
 	}
@@ -160,7 +175,7 @@ void LRdv::exporter(std::ostream& ost) const
 	ost << "BEGIN:VCALENDAR" << std::endl;
 	ost << "VERSION:2.0" << std::endl;
 	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
-	
+
 	rdv *crt = d_tete;
     while(crt != nullptr)
     {
@@ -176,19 +191,27 @@ void LRdv::exporter(std::ostream& ost, const rdv& r) const
 	ost << "BEGIN:VCALENDAR" << std::endl;
 	ost << "VERSION:2.0" << std::endl;
 	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
-	
+
 	r.exporter(ost);
 
 	ost << "END:VCALENDAR" << std::endl;
+}
+
+void LRdv::exporterDans(const std::string fichier) const
+{
+    std::ofstream oft{fichier};
+
+    exporter(oft);
+    oft.close();
 }
 
 void LRdv::save(std::ostream& ost) const
 {
 	if(!d_tete)
 		return;
- 
+
     ost << "BEGIN:LRDV" << std::endl;
-    
+
     rdv *crt = d_tete;
     while(crt != nullptr)
     {
@@ -202,7 +225,6 @@ void LRdv::save(std::ostream& ost) const
 void LRdv::load(std::istream& ist)
 {
     std::string ligne{""};
-    int ist_pos;
 
     getline(ist, ligne);
     if (ligne != "BEGIN:LRDV")

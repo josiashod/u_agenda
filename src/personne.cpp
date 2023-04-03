@@ -121,7 +121,12 @@ bool personne::contient(std::string& str) const
 {
     std::size_t trouvee;
 
-    trouvee = nomComplet().find(str);
+    std::string nomcomplet = nomComplet();
+
+    std::transform(nomcomplet.begin(), nomcomplet.end(), nomcomplet.begin(), ::tolower);
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+
+    trouvee = nomcomplet.find(str);
     return (trouvee != std::string::npos);
 }
 
@@ -169,7 +174,7 @@ void personne::importer(std::istream& ist)
     if (ligne != "BEGIN:VCARD")
         return;
 
-    while(!ist.eof() || ligne != "END:VCARD")
+    while(!ist.eof() && ligne != "END:VCARD")
     {
         // On recupere le nom et le prenom
         if (ligne.substr(0, 2) == "N:")
@@ -194,7 +199,6 @@ void personne::importer(std::istream& ist)
 
         ist >> ligne;
     }
-
 }
 
 
@@ -208,6 +212,16 @@ bool personne::operator==(const personne& p) const
 bool personne::operator>(const personne& p) const
 {
     return vientAvant(p);
+}
+
+personne &personne::operator=(const personne &p)
+{
+    d_nom = p.d_nom;
+    d_prenom = p.d_prenom;
+    d_email = p.d_email;
+    d_numero = p.d_numero;
+
+    return *this;
 }
 
 std::istream& operator>>(std::istream& ist, personne& p)
