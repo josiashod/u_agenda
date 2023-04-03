@@ -183,7 +183,7 @@ void rdv::load(std::istream& ist)
         ist >> (*d_participants);
     }
 
-    ist >> ligne;
+    // ist >> ligne;
 }
 
 std::string timestamp(date d, heure h)

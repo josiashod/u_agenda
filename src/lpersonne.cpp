@@ -260,7 +260,9 @@ void LPersonne::load(std::istream& ist)
 {
     std::string ligne{""};
 
-    ist >> ligne;
+    getline(ist, ligne);
+    getline(ist, ligne);
+
     if (ligne != "BEGIN:LPERSONNE")
         return;
 

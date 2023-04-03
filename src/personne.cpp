@@ -137,20 +137,33 @@ bool personne::vientAvant(const personne& p) const
 
 void personne::affiche(std::ostream& ost) const
 {
-    ost << '{' + d_nom + ", " + d_prenom + ", "
+    ost << "{\"" + d_nom + "\", \"" + d_prenom + "\", "
     + d_numero + ", " + d_email + '}' << std::endl;
 }
 
 void personne::lire(std::istream &ist)
 {
-    char c;
+    std::string ligne;
+    std::size_t start_pos = 2, end_pos;
 
-    ist >> c >> d_nom >> d_prenom >> d_numero >> d_email;
+    getline(ist, ligne);
 
-    d_nom = d_nom.substr(0, d_nom.length() - 1);
-    d_prenom = d_prenom.substr(0, d_prenom.length() - 1);
-    d_email = d_email.substr(0, d_email.length() - 1);
-    d_numero = d_numero.substr(0, d_numero.length() - 1);
+    end_pos = ligne.find(",");
+    d_nom = ligne.substr(start_pos, end_pos - 3);
+    ligne = ligne.substr(end_pos + 3, ligne.length());
+
+    start_pos = 0;
+    end_pos = ligne.find(",");
+
+    d_prenom = ligne.substr(start_pos, end_pos - 1);
+    ligne = ligne.substr(end_pos + 2, ligne.length());
+
+    start_pos = 0;
+    end_pos = ligne.find(",");
+
+    d_numero = ligne.substr(start_pos, end_pos);
+    ligne = ligne.substr(end_pos + 2, ligne.length());
+    d_email = ligne.substr(0, ligne.length() - 1);
 }
 
 void personne::exporter(std::ostream& ost) const
