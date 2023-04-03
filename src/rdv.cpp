@@ -178,7 +178,7 @@ void rdv::load(std::istream& ist)
     ist >> ligne;
     if(ligne == "BEGIN:LPERSONNE")
     {
-        ist.seekg(ist_pos);
+        ist.seekg(ist_pos + 1);
         d_participants = new LPersonne();
         ist >> (*d_participants);
     }
