@@ -1,8 +1,9 @@
 #include "uagenda.h"
-#include "rdvdialog.h"
-#include "contactsdialog.h"
-#include "contactform.h"
-#include "event.h"
+#include "composants/rdvdialog.h"
+#include "composants/contactsdialog.h"
+#include "composants/contactform.h"
+#include "composants/event.h"
+#include "composants/checkboxlist.h"
 
 #include <fstream>
 #include <QGridLayout>
@@ -126,7 +127,6 @@ void UAgenda::creerInterface()
 
     auto content{new QHBoxLayout()};
     auto sidebar{new QVBoxLayout()};
-
 
     // SIDEBAR
     auto create_button{new QPushButton(QIcon(":/icons/plus.svg"), tr("Ajouter"))};

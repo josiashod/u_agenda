@@ -9,15 +9,16 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    contact.cpp \
-    contactform.cpp \
-    contactitem.cpp \
-    contactsdialog.cpp \
-    event.cpp \
+    composants/checkboxlist.cpp \
+    composants/contact.cpp \
+    composants/contactform.cpp \
+    composants/contactitem.cpp \
+    composants/contactsdialog.cpp \
+    composants/event.cpp \
+    composants/rdvdialog.cpp \
+    composants/rdvitem.cpp \
     main.cpp \
-    rdvdialog.cpp \
     rdvform.cpp \
-    rdvitem.cpp \
     uagenda.cpp \
     ./../src/date.cpp \
     ./../src/heure.cpp \
@@ -28,14 +29,15 @@ SOURCES += \
 
 
 HEADERS += \
-    contact.h \
-    contactform.h \
-    contactitem.h \
-    contactsdialog.h \
-    event.h \
-    rdvdialog.h \
+    composants/checkboxlist.h \
+    composants/contact.h \
+    composants/contactform.h \
+    composants/contactitem.h \
+    composants/contactsdialog.h \
+    composants/event.h \
+    composants/rdvdialog.h \
+    composants/rdvitem.h \
     rdvform.h \
-    rdvitem.h \
     uagenda.h \
     ./../src/date.h \
     ./../src/error.h \
