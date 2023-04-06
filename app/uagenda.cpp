@@ -3,7 +3,7 @@
 #include "composants/contactsdialog.h"
 #include "composants/contactform.h"
 #include "composants/event.h"
-#include "composants/checkboxlist.h"
+#include "rdvform.h"
 
 #include <fstream>
 #include <QGridLayout>
@@ -419,7 +419,11 @@ void UAgenda::onExportRdv()
 void UAgenda::onAjouter(QAction *action)
 {
     if(action->text() == "Ajouter un rendez-vous")
-    {}
+    {
+        auto form{new RdvForm(d_currentDate, d_rdvs, d_contacts, nullptr, this)};
+        form->setModal(true);
+        form->exec();
+    }
     else
     {
         auto form{new ContactForm()};
