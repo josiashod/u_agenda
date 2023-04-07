@@ -14,8 +14,7 @@ class QComboBox;
 class QCalendarWidget;
 class QPushButton;
 
-const std::string CONTACTLOGS = "CLOGFILE";
-const std::string EVENTLOGS = "ELOGFILE";
+const std::string LOGGER = "U_AGENDA.log";
 
 class UAgenda : public QWidget
 {

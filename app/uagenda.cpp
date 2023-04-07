@@ -45,22 +45,23 @@ void UAgenda::loadData()
     d_contacts = new LPersonne();
     d_rdvs = new LRdv();
 
-    std::ifstream psifs(CONTACTLOGS);
-    std::ifstream esifs(EVENTLOGS);
+    std::ifstream ifs(LOGGER);
+    d_contacts->load(ifs);
 
-    d_contacts->load(psifs);
-    d_rdvs->load(esifs);
+    int pos = ifs.tellg();
+
+    ifs.seekg(pos + 1);
+    d_rdvs->load(ifs);
 }
 
 void UAgenda::saveData()
 {
-    std::ofstream psofs(CONTACTLOGS);
-    std::ofstream esofs(EVENTLOGS);
+    std::ofstream ofs(LOGGER);
 
     if (d_contacts && d_contacts->tete())
-        d_contacts->save(psofs);
+        d_contacts->save(ofs);
     if (d_rdvs && d_rdvs->tete())
-        d_rdvs->save(esofs);
+        d_rdvs->save(ofs);
 }
 
 void UAgenda::setPolice()
