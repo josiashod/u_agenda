@@ -126,7 +126,7 @@ void LRdv::miseAJourParticipant(const personne& old, const personne& newp)
 }
 
 bool LRdv::overlap(const personne& p, const date& d
-	, const heure& h)
+	, const heure& debut, const heure& fin) const
 {
 	bool overlap = false;
 	LRdv* lrpd = trouverParDate(d);
@@ -137,7 +137,8 @@ bool LRdv::overlap(const personne& p, const date& d
 		if(lrpp)
 		{
 			rdv* crt = lrpd->d_tete;
-			while(crt && !h.estEntre(crt->h_debut(), crt->h_fin()))
+			while(crt && !debut.estEntre(crt->h_debut(), crt->h_fin())
+				&& !fin->estEntre(crt->h_debut(), crt->h_fin()))
 				crt = crt->d_suiv;
 
 			overlap = (crt != nullptr);
