@@ -14,8 +14,6 @@ class QComboBox;
 class QCalendarWidget;
 class QPushButton;
 
-const std::string LOGGER = "U_AGENDA.log";
-
 class UAgenda : public QWidget
 {
     Q_OBJECT
@@ -23,19 +21,12 @@ class UAgenda : public QWidget
 public:
     UAgenda(QWidget *parent = nullptr);
     ~UAgenda();
-    void creerInterface();
-    void setPolice();
-    void afficheDate();
-    void creerGrille();
-    void afficheCalendrier();
-    void rafraichirGrille();
-    void loadData();
-    void saveData();
 
-public slots:
+private slots:
     void onReinitDate();
     void onNextMonth();
     void onPrevMonth();
+    void onDateChange(QDate d);
     void onCalendrierChange(int year, int month);
     void onAfficheContact();
     void onSearchBar(const QString &text);
@@ -46,6 +37,7 @@ public slots:
     void onAjouterContact(personne p);
     void onAfficheRdv();
     void onSupprimerRdv(std::string nom);
+    void onAjoutRdv();
 
 
 private:
@@ -60,6 +52,14 @@ private:
     QLineEdit *d_search_in;
     QPushButton *d_search_btn;
 
+    void creerInterface();
+    void setPolice();
+    void afficheDate();
+    void creerGrille();
+    void afficheCalendrier();
+    void rafraichirGrille();
+    void loadData();
+    void saveData();
 //    ContactDialog *contactDialog;
 };
 #endif // UAGENDA_H

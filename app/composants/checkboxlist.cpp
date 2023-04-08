@@ -150,12 +150,12 @@ void CheckBoxList::itemClicked(int index)
     }
 }
 
-void CheckBoxList::SetSearchBarPlaceHolderText(const QString& placeholderText)
+void CheckBoxList::setSearchBarPlaceHolderText(const QString& placeholderText)
 {
     d_search_bar->setPlaceholderText(placeholderText);
 }
 
-void CheckBoxList::SetPlaceHolderText(const QString& placeholderText)
+void CheckBoxList::setPlaceHolderText(const QString& placeholderText)
 {
     d_line_edit->setPlaceholderText(placeholderText);
 }

@@ -66,7 +66,7 @@ void RdvItem::creerInterface()
 
 void RdvItem::onAfficher()
 {
-    auto r{new Event(d_rdv, this)};
+    auto r{new Event(d_rdv, nullptr, nullptr, this)};
     connect(r, &Event::deleted, this, &RdvItem::onSupprimer);
     r->setModal(true);
     r->show();
@@ -89,6 +89,6 @@ void RdvItem::onSupprimer()
 {
     auto form {new RdvForm(d_rdv)};
     form->setModal(true);
-    connect(form, &RdvForm::updatePersonne, this, &RdvForm::onModifier);
+    connect(form, &RdvForm::modifiePersonne, this, &RdvForm::onModifier);
     form->exec();
 } */

@@ -83,6 +83,6 @@ void ContactItem::onAfficherFormModification()
 {
     auto form {new ContactForm(d_personne)};
     form->setModal(true);
-    connect(form, &ContactForm::updatePersonne, this, &ContactItem::onModifier);
+    connect(form, &ContactForm::modifiePersonne, this, &ContactItem::onModifier);
     form->exec();
 }

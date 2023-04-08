@@ -5,9 +5,11 @@
 #include <QDate>
 #include <QPushButton>
 
-Event::Event(const rdv& r, QWidget *parent) :
-    QDialog(parent),
-    d_rdv{r}
+Event::Event(const rdv& r, LRdv *lrdv, LPersonne *lpersonne, QWidget *parent) :
+    QDialog(parent)
+  , d_rdv{r}
+  , d_lrdv{lrdv}
+  , d_lpersonne{lpersonne}
 {
     creerVue();
 }
@@ -56,10 +58,15 @@ void Event::creerVue()
     main->addSpacing(15);
     main->addStretch(1);
 
+    auto btnModifier{new QPushButton{QIcon(":/icons/pencil-square.svg"), "Modifier"}};
+    btnModifier->setAutoDefault(false);
     auto btnSup{new QPushButton{QIcon(":/icons/trash.svg"), "Supprimer"}};
     btnSup->setAutoDefault(false);
+
+    connect(btnModifier, &QPushButton::clicked, this, &Event::onSupprimer);
     connect(btnSup, &QPushButton::clicked, this, &Event::onSupprimer);
 
+    main->addWidget(btnModifier, 0, Qt::AlignBottom);
     main->addWidget(btnSup, 0, Qt::AlignBottom);
 }
 

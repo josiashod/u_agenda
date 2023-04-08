@@ -21,7 +21,7 @@ ContactForm::~ContactForm()
 void ContactForm::createForm()
 {
     if (!d_personne)
-        setWindowTitle("Ajouter un contact");
+        setWindowTitle("Nouveau contact");
     else
         setWindowTitle("Modifier "+ QString::fromStdString(d_personne->nomComplet()));
     setMinimumSize(450, 382);
@@ -160,7 +160,7 @@ void ContactForm::onAjouter()
 
         personne p{nom, prenom, numero, email};
         hide();
-        emit addPersonne(p);
+        emit ajoutPersonne(p);
     }
 //    else
 //    {
@@ -181,7 +181,7 @@ void ContactForm::onModifier()
 
         personne p{nom, prenom, numero, email};
         hide();
-        emit updatePersonne(*d_personne, p);
+        emit modifiePersonne(*d_personne, p);
     }
 //    else
 //    {

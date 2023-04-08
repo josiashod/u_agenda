@@ -24,7 +24,8 @@
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
     , d_currentDate{QDate::currentDate()}
-    , d_contacts{nullptr}
+//    , d_contacts{nullptr}
+//    , d_rdvs{nullptr}
 {
     loadData();
     creerInterface();
@@ -35,9 +36,9 @@ UAgenda::UAgenda(QWidget *parent)
 
 UAgenda::~UAgenda()
 {
-    saveData();
-    delete d_contacts;
-    delete d_rdvs;
+//    saveData();
+//    delete d_contacts;
+//    delete d_rdvs;
 }
 
 void UAgenda::loadData()
@@ -45,23 +46,22 @@ void UAgenda::loadData()
     d_contacts = new LPersonne();
     d_rdvs = new LRdv();
 
-    std::ifstream ifs(LOGGER);
-    d_contacts->load(ifs);
+    std::ifstream c_ifs("U_AGENDACONTACT.log");
+    d_contacts->load(c_ifs);
 
-    int pos = ifs.tellg();
-
-    ifs.seekg(pos + 1);
-    d_rdvs->load(ifs);
+    std::ifstream e_ifs("U_AGENDAEVENT.log");
+    d_rdvs->load(e_ifs);
 }
 
 void UAgenda::saveData()
 {
-    std::ofstream ofs(LOGGER);
+    std::ofstream c_ofs("U_AGENDACONTACT.log");
+    std::ofstream e_ofs("U_AGENDAEVENT.log");
 
     if (d_contacts && d_contacts->tete())
-        d_contacts->save(ofs);
+        d_contacts->save(c_ofs);
     if (d_rdvs && d_rdvs->tete())
-        d_rdvs->save(ofs);
+        d_rdvs->save(e_ofs);
 }
 
 void UAgenda::setPolice()
@@ -152,6 +152,7 @@ void UAgenda::creerInterface()
     sidebar->insertStretch(-1, 1);
 
     connect(d_calendrierWidget, &QCalendarWidget::currentPageChanged, this, &UAgenda::onCalendrierChange);
+    connect(d_calendrierWidget, &QCalendarWidget::clicked, this, &UAgenda::onDateChange);
 
     auto calendrier{new QVBoxLayout()};
     d_grille = new QGridLayout();
@@ -281,7 +282,7 @@ void UAgenda::afficheCalendrier()
             }
 
             if(crt)
-                layout->addWidget(new QLabel("..."));
+                layout->addWidget(new QLabel("..."), Qt::AlignHCenter);
             delete rdvs;
         }
 
@@ -320,6 +321,13 @@ void UAgenda::onPrevMonth()
         d_currentDate.setDate(d_currentDate.year(), d_currentDate.month() - 1, 1);
 
     d_calendrierWidget->setCurrentPage(d_currentDate.year(), d_currentDate.month());
+    afficheDate();
+    afficheCalendrier();
+}
+
+void UAgenda::onDateChange(QDate d)
+{
+    d_currentDate = d;
     afficheDate();
     afficheCalendrier();
 }
@@ -423,13 +431,14 @@ void UAgenda::onAjouter(QAction *action)
     {
         auto form{new RdvForm(d_currentDate, d_rdvs, d_contacts, nullptr, this)};
         form->setModal(true);
+        connect(form, &RdvForm::ajoutRdv, this, &UAgenda::onAjoutRdv);
         form->exec();
     }
     else
     {
         auto form{new ContactForm()};
         form->setModal(true);
-        connect(form, &ContactForm::addPersonne, this, &UAgenda::onAjouterContact);
+        connect(form, &ContactForm::ajoutPersonne, this, &UAgenda::onAjouterContact);
         form->exec();
     }
 }
@@ -440,13 +449,18 @@ void UAgenda::onAjouterContact(personne p)
     QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été ajouté avec succès")}.exec();
 }
 
+void UAgenda::onAjoutRdv()
+{
+    afficheCalendrier();
+}
+
 void UAgenda::onAfficheRdv()
 {
     auto button{(QPushButton*)sender()};
 
     auto rdv = d_rdvs->trouverUn(button->text().toStdString());
 
-    auto e{new Event(*rdv, this)};
+    auto e{new Event(*rdv, d_rdvs, d_contacts, this)};
     connect(e, &Event::deleted, this, &UAgenda::onSupprimerRdv);
     e->setModal(true);
     e->exec();

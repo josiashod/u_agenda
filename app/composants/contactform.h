@@ -24,8 +24,8 @@ private slots:
     void onModifier();
 
 signals:
-    void addPersonne(personne p);
-    void updatePersonne(personne oldPersonne, personne newPersonne);
+    void ajoutPersonne(personne p);
+    void modifiePersonne(personne oldPersonne, personne newPersonne);
 
 private:
     personne* d_personne;

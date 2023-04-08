@@ -17,8 +17,8 @@ public:
     QStringList currentText();
     int count() const;
     void hidePopup() override;
-    void SetSearchBarPlaceHolderText(const QString& placeholderText);
-    void SetPlaceHolderText(const QString& placeholderText);
+    void setSearchBarPlaceHolderText(const QString& placeholderText);
+    void setPlaceHolderText(const QString& placeholderText);
     void ResetSelection();
 
 signals:
