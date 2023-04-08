@@ -27,7 +27,7 @@ class LRdv
         LRdv* trouverParPersonne(const personne& p) const;
         void miseAJourParticipant(const personne& old, const personne& newp);
         bool overlap(const personne& p, const date& d
-        , const heure& h);
+        , const heure& debut, const heure& fin) const;
         void supprimer(std::string nom);
         void exporter(std::ostream& ost) const; // exporte une liste de rendez-vous
         void exporterDans(const std::string fichier) const;
