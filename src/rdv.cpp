@@ -2,7 +2,9 @@
 #include "lpersonne.h"
 
 // CONSTRUCTEURS + DESTRUCTEUR
-rdv::rdv()
+rdv::rdv(): d_nom{""}
+, d_description{""}
+, d_localisation{""}
 {}
 
 rdv::rdv(std::string nom, date d, heure h_debut
@@ -148,8 +150,8 @@ void rdv::save(std::ostream& ost) const
 {
     ost << "BEGIN:RDV" << std::endl;
     ost << d_nom << std::endl;
-    ost << d_description << std::endl;
-    ost << d_localisation << std::endl;
+    ost << (d_description.length() ? d_description : "NULL") << std::endl;
+    ost << (d_localisation.length() ? d_localisation : "NULL") << std::endl;
     ost << d_date;
     ost << d_horaires[0];
     ost << d_horaires[1];
@@ -168,7 +170,11 @@ void rdv::load(std::istream& ist)
 
     getline(ist, d_nom, '\n');
     getline(ist, d_description, '\n');
+    if(d_description == "NULL")
+        d_description = "";
     getline(ist, d_localisation, '\n');
+    if(d_localisation == "NULL")
+        d_localisation = "";
 
     ist >> d_date;
     ist >> d_horaires[0];
@@ -246,16 +252,12 @@ bool rdv::estAvant(const rdv& r) const
     }
 }
 
-bool rdv::overlap(const rdv& r) const
+bool rdv::overlap(const date& d, const heure& debut, const heure& fin) const
 {
-    if (!(d_date == r.d_date))
+    if (!(d_date == d))
         return false;
 
-    if(h_debut().estEntre(r.h_debut(), r.h_fin())
-    || r.h_fin().estEntre(r.h_debut(), r.h_fin()))
-        return true;
-
-    if(h_debut().estAvant(r.h_debut()) && !r.h_fin().estAvant(r.h_fin()))
+    if(debut.estEntre(h_debut(), h_fin()) || fin.estEntre(h_debut(), h_fin()))
         return true;
 
     return false;

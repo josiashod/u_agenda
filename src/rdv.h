@@ -48,7 +48,7 @@ class rdv
         void load(std::istream& ist);
         void exporter(std::ostream& ost) const;
         bool estAvant(const rdv& r) const;
-        bool overlap(const rdv& r) const;
+        bool overlap(const date& d, const heure& debut, const heure& fin) const;
         bool contient(std::string& str) const;
 
 
