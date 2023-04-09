@@ -29,7 +29,7 @@ rdv::rdv(std::string nom, date d, heure h_debut
     , d_suiv{nullptr}
     // , d_prec{nullptr}
 {
-    *d_participants = participants;
+    d_participants = new LPersonne(participants);
 }
 
 rdv::rdv(const rdv& r):
@@ -43,7 +43,7 @@ rdv::rdv(const rdv& r):
     // , d_prec{nullptr}
 {
 
-    *d_participants = *r.d_participants;
+    d_participants = new LPersonne(*r.d_participants);
 }
 
 rdv::~rdv()
@@ -288,6 +288,8 @@ rdv& rdv::operator=(const rdv &r)
     d_description = r.d_description;
     d_localisation = r.d_localisation;
     *d_participants = *r.d_participants;
+
+    return *this;
 }
 
 std::ostream& operator<<(std::ostream& ost, const rdv& r){
