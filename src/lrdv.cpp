@@ -128,7 +128,6 @@ void LRdv::miseAJourParticipant(const personne& old, const personne& newp)
 bool LRdv::overlap(const personne& p, const date& d
 	, const heure& debut, const heure& fin) const
 {
-	bool overlap = false;
 	rdv* crt = d_tete;
 
 	while(crt)
@@ -139,9 +138,7 @@ bool LRdv::overlap(const personne& p, const date& d
 		crt = crt->d_suiv;
 	}
 
-	overlap = (crt != nullptr);
-
-	return overlap;
+	return (crt != nullptr);
 }
 
 void LRdv::supprimer(std::string nom)
