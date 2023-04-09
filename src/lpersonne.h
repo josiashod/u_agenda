@@ -10,6 +10,7 @@ class LPersonne {
     public:
         // CONSTRUCTEURS
         LPersonne();
+        LPersonne(const LPersonne& lp);
         ~LPersonne();
 
         // ACCESSEURS MUTATEURS
@@ -37,6 +38,7 @@ class LPersonne {
         int importerDepuis(const std::string fichier);
 
         bool operator==(const LPersonne& lp) const;
+        LPersonne& operator=(const LPersonne& lp);
         friend std::istream& operator>>(std::istream& ist, LPersonne& lp);
         friend std::ostream& operator<<(std::ostream& ost, const LPersonne& lp);
 
