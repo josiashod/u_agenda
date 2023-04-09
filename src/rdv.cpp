@@ -21,14 +21,16 @@ rdv::rdv(std::string nom, date d, heure h_debut
 rdv::rdv(std::string nom, date d, heure h_debut
 , heure h_fin, std::string description
 , std::string localisation
-, LPersonne* participants): d_nom{nom}, d_date{d}
+, const LPersonne& participants): d_nom{nom}, d_date{d}
     , d_horaires{h_debut, h_fin}
     , d_description{description}
     , d_localisation{localisation}
-    , d_participants{participants}
+    , d_participants{nullptr}
     , d_suiv{nullptr}
     // , d_prec{nullptr}
-{}
+{
+    *d_participants = participants;
+}
 
 rdv::rdv(const rdv& r):
     d_nom{r.d_nom}
@@ -41,16 +43,7 @@ rdv::rdv(const rdv& r):
     // , d_prec{nullptr}
 {
 
-    if(r.d_participants)
-    {
-        auto rp_tete = (r.d_participants)->tete();
-        d_participants = new LPersonne();
-        while(rp_tete)
-        {
-            d_participants->ajouter(*rp_tete);
-            rp_tete = rp_tete->suivant();
-        }
-    }
+    *d_participants = *r.d_participants;
 }
 
 rdv::~rdv()
@@ -285,6 +278,16 @@ bool rdv::operator==(const rdv& r){
         r.d_date == d_date &&
         r.d_horaires == d_horaires &&
         *r.d_participants == *d_participants);
+}
+
+rdv& rdv::operator=(const rdv &r)
+{
+    d_nom = r.d_nom;
+    d_date = r.d_date;
+    d_horaires = r.d_horaires;
+    d_description = r.d_description;
+    d_localisation = r.d_localisation;
+    *d_participants = *r.d_participants;
 }
 
 std::ostream& operator<<(std::ostream& ost, const rdv& r){
