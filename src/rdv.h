@@ -20,7 +20,7 @@ class rdv
         rdv(std::string nom, date d, heure h_debut
         , heure h_fin, std::string description
         , std::string localisation
-        , LPersonne* participants);
+        , const LPersonne& participants);
         rdv(const rdv& r);
         virtual ~rdv();
 
@@ -54,6 +54,7 @@ class rdv
 
         bool operator>(const rdv& r);
         bool operator==(const rdv& r);
+        rdv& operator=(const rdv &r);
         friend std::ostream& operator <<(std::ostream& ost, const rdv& r);
         friend std::istream& operator >>(std::istream& ist, rdv& r);
 

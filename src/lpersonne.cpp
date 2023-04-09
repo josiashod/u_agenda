@@ -6,6 +6,31 @@ LPersonne::LPersonne(): d_tete{nullptr}
 , d_taille{0}
 {}
 
+LPersonne::LPersonne(const LPersonne& lp): d_tete{nullptr}
+, d_queue{nullptr}
+, d_taille{0}
+{
+    if(lp.d_tete)
+    {
+        d_tete = new personne(*lp.d_tete);
+
+        personne *crt = d_tete;
+        personne *lp_crt = lp.d_tete->d_suiv;
+
+        while(lp_crt)
+        {
+            crt->d_suiv = new personne(*lp_crt);
+            crt->d_suiv->d_prec = crt;
+            crt = crt->d_suiv;
+
+            lp_crt = lp_crt->d_suiv;
+        }
+
+        d_queue = crt;
+    }
+}
+
+
 LPersonne::~LPersonne()
 {
     personne* as = d_tete;
@@ -343,6 +368,63 @@ bool LPersonne::operator==(const LPersonne& lp) const
 
     return true;
 }
+
+LPersonne& LPersonne::operator=(const LPersonne& lp)
+{
+    if(&lp == this)
+        return *this;
+    
+    personne *crt1 = d_tete;
+    personne *crt2 = lp.d_tete;
+    personne *prec = nullptr;
+
+    while (crt1 != nullptr && crt2 != nullptr)
+	{
+		*crt1 = *crt2;
+		prec = crt1;
+		crt1 = crt1->d_suiv;
+		crt2 = crt2->d_suiv;
+	}
+	if (crt1 != nullptr)
+	{
+		if (prec != nullptr)
+        {
+			prec->d_suiv = nullptr;
+            d_queue = prec;
+        }
+		else
+			d_tete = nullptr;
+		while(crt1)
+		{
+			prec = crt1;
+			crt1 = crt1->d_suiv;
+			delete prec;
+		}
+	}
+	else if (crt2 != nullptr)
+	{
+		while(crt2 != nullptr)
+		{
+			crt1 = new personne(*crt2);
+            d_queue = crt1;
+			if (prec == nullptr)
+				d_tete = crt1;
+			else
+			{
+				prec->d_suiv = crt1;
+				crt1->d_prec = prec;
+			}
+			prec = crt1;
+			crt2 = crt2->d_suiv;
+		}
+	}
+
+    d_queue = prec;
+    this->d_taille = lp.d_taille;
+
+	return *this;
+}
+
 
 std::istream& operator>>(std::istream& ist, LPersonne& lp)
 {
