@@ -30,6 +30,8 @@ class LRdv
         , const heure& debut, const heure& fin) const;
         void supprimer(std::string nom);
         void exporter(std::ostream& ost) const; // exporte une liste de rendez-vous
+        // exporte une liste de rendez-vous entre deux dates
+        void exporter(std::ostream& ost, const date& d_debut, const date& d_fin) const;
         void exporterDans(const std::string fichier) const;
         void exporter(std::ostream& ost, const rdv& r) const; // exporte un seul rendez-vous
         void save(std::ostream& ost) const;

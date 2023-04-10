@@ -178,6 +178,25 @@ void LRdv::exporter(std::ostream& ost) const
 	ost << "END:VCALENDAR" << std::endl;
 }
 
+void LRdv::exporter(std::ostream& ost, const date& d_debut, const date& d_fin) const
+{
+	ost << "BEGIN:VCALENDAR" << std::endl;
+	ost << "VERSION:2.0" << std::endl;
+	ost << "PRODID:-//uagenda/event//v1.0//FR" << std::endl;
+
+	rdv *crt = d_tete;
+	while(crt && crt->d_date < d_debut)
+		crt = crt->d_suiv;
+
+	while(crt && crt->d_date <= d_fin)
+	{
+        (*crt).exporter(ost);
+        crt = crt->d_suiv;
+    }
+
+	ost << "END:VCALENDAR" << std::endl;
+}
+
 void LRdv::exporter(std::ostream& ost, const rdv& r) const
 {
 	ost << "BEGIN:VCALENDAR" << std::endl;
