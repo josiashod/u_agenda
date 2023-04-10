@@ -92,7 +92,22 @@ bool date::operator==(const date& date) const
     return estMemeJourQue(date);
 }
 
-bool date::operator>(const date& date) const
+bool date::operator!=(const date& date) const
+{
+    return !estMemeJourQue(date);
+}
+
+bool date::operator<(const date& date) const
 {
     return estAvant(date);
+}
+
+bool operator>=(const date& date) const
+{
+    return (!estAvant(date) || estMemeJourQue(date));
+}
+
+bool date::operator<=(const date& date) const
+{
+    return (estAvant(date) || estMemeJourQue(date));
 }

@@ -27,7 +27,10 @@ class date
         bool estMemeJourQue(const date& date) const;
 
         bool operator==(const date& date) const;
-        bool operator>(const date& date) const;
+        bool operator!=(const date& date) const;
+        bool operator<(const date& date) const;
+        bool operator>=(const date& date) const;
+        bool operator<=(const date& date) const;
 
 
     private:

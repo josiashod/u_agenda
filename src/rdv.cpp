@@ -221,10 +221,10 @@ void rdv::exporter(std::ostream& ost) const
 
 bool rdv::estAvant(const rdv& r) const
 {
-    if(d_date > r.d_date)
+    if(d_date < r.d_date)
        return true;
 
-    else if(!(d_date == r.d_date))
+    else if(d_date != r.d_date)
         return false;
 
     else

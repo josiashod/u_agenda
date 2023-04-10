@@ -24,6 +24,7 @@ class heure
         bool estMemeHeureQue(const heure& h) const;
         bool estEntre(const heure& debut, const heure& fin) const;
         bool operator==(const heure& h) const;
+        bool operator!=(const heure& h) const;
         bool operator>(const heure& h) const;
 
         friend std::istream& operator>>(std::istream& ist, heure& h);
