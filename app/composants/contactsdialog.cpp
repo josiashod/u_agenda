@@ -142,7 +142,7 @@ void ContactsDialog::onModifier(personne oldPersonne, personne newPersonne)
     *pers = newPersonne;
     d_rdvs->miseAJourParticipant(oldPersonne, newPersonne);
 
-    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été modifié avec succès")}.exec();
+//    QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été modifié avec succès")}.exec();
 
     if(d_recherche->text().length() > 0)
         clear();
@@ -201,6 +201,9 @@ void ContactsDialog::onImporter()
             tr("Importer des contacts"),
             directory,
             tr("VCard files(*.vcf *vcard)"), nullptr, QFileDialog::ReadOnly);
+
+    if (fileName.isEmpty())
+            return;
 
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) {

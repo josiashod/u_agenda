@@ -26,12 +26,12 @@ private slots:
     void onHDChange(QTime time);
     void onHFChange(QTime time);
     void onAjouter();
-//    void onModifier();
+    void onModifier();
 //    void onReinitialise();
 
 signals:
-    void ajoutRdv();
-    void modifieRdv();
+    void ajoutRdv(const rdv& r);
+    void modifieRdv(std::string nom, const rdv& r);
 
 private:
     rdv* d_rdv;

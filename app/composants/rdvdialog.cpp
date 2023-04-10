@@ -11,10 +11,12 @@
 #include <QStandardPaths>
 
 
-RdvDialog::RdvDialog(QString titre, LRdv *rdvs, QWidget *parent) :
+RdvDialog::RdvDialog(QString titre, LRdv *rdvs, LRdv *apprdvs, LPersonne *lpersonne, QWidget *parent) :
     QDialog(parent)
   , d_titre{titre}
   , d_rdvs{rdvs}
+  , d_apprdvs{apprdvs}
+  , d_lpersonne{lpersonne}
 {
     creerInterface();
     afficherRdvs();
@@ -59,9 +61,10 @@ void RdvDialog::afficherRdvs()
             item->setSizeHint(QSize(0, 60));
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 
-            auto r{new RdvItem{*crt}};
+            auto r{new RdvItem{*crt, d_apprdvs, d_lpersonne}};
 
             connect(r, &RdvItem::deleted, this, &RdvDialog::onSupprimer);
+            connect(r, &RdvItem::updated, this, &RdvDialog::onModifier);
             d_list_rdvs->addItem(item);
             d_list_rdvs->setItemWidget(item, r);
             crt = crt->suivant();
@@ -75,6 +78,15 @@ void RdvDialog::afficherRdvs()
         item->setTextAlignment(Qt::AlignCenter);
         d_list_rdvs->addItem(item);
     }
+}
+
+void RdvDialog::onModifier(std::string nom, const rdv& r)
+{
+    rdv *nr = d_rdvs->trouverUn(nom);
+    *nr = r;
+    afficherRdvs();
+
+    emit updated(nom, *nr);
 }
 
 void RdvDialog::onSupprimer(std::string nom)

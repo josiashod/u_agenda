@@ -118,7 +118,7 @@ void RdvForm::createForm()
     {
         btn->setText("Enregistrer");
         btn->setStyleSheet("QPushButton{background-color: #fb923c}");
-//        connect(btn, &QPushButton::clicked, this, &Contacheure_finorm::onModifier);
+        connect(btn, &QPushButton::clicked, this, &RdvForm::onModifier);
     }
 
 //    boiteBoutons->addWidget(btn);
@@ -265,6 +265,8 @@ void RdvForm::afficheErreur()
 bool RdvForm::overlapRDV()
 {
     bool overlap = false;
+    bool participantChange = false;
+
     QStringList participant = d_participants_input->currentText();
     QString texte = "";
     auto qdate = d_date_input->date();
@@ -277,25 +279,40 @@ bool RdvForm::overlapRDV()
     auto heure_fin{heure{static_cast<unsigned int>(hf.hour()), static_cast<unsigned int>(hf.minute())}};
     int i = 0;
 
-    for(auto personne: participant)
+    if(d_rdv->participants())
     {
-        auto p = d_lpersonne->rechercher(personne.toStdString());
-
-        if(p)
+        personne *crt = d_rdv->participants()->tete();
+        while(crt)
         {
-            if(d_lrdv->overlap(*p, d, heure_debut, heure_fin))
+            int i = participant.indexOf(QString::fromStdString(crt->nomComplet()));
+            if(i > -1)
+                participant.removeAt(i);
+            crt = crt->suivant();
+        }
+    }
+
+    if(participant.length() || !(heure_debut == d_rdv->h_debut()) || !(heure_fin == d_rdv->h_fin()) || !(d == d_rdv->day()))
+    {
+        for(auto personne: d_participants_input->currentText())
+        {
+            auto p = d_lpersonne->rechercher(personne.toStdString());
+
+            if(p)
             {
-                overlap = true;
-                texte += (i ? ", " : "") + personne;
-                i++;
+                if(d_lrdv->overlap(*p, d, heure_debut, heure_fin))
+                {
+                    overlap = true;
+                    texte += (i ? ", " : "") + personne;
+                    i++;
+                }
             }
         }
     }
 
-    if(i)
+    if(overlap && i)
     {
         texte += ((i == 1) ? " a" : " ont");
-        texte += " déjà un autre rendez-vous dans cette tranche d'heure";
+        texte += " déjà un autre rendez-vous à cette heure";
         QMessageBox{QMessageBox::Critical, tr("Erreur"), texte , QMessageBox::Ok, this}.exec();
     }
 
@@ -330,8 +347,40 @@ void RdvForm::onAjouter()
             r.ajouterParticipant(*p);
         }
 
-        d_lrdv->ajouter(r);
-        hide();
-        emit ajoutRdv();
+        emit ajoutRdv(r);
+        close();
+    }
+}
+
+void RdvForm::onModifier()
+{
+    afficheErreur();
+
+    if(verifieForm())
+    {
+        auto qdate = d_date_input->date();
+        auto hd = d_hd_input->time();
+        auto hf = d_hf_input->time();
+
+        //convertion en date et heure;
+        date d{static_cast<unsigned int>(qdate.day()),
+        static_cast<unsigned int>(qdate.month()), static_cast<unsigned int>(qdate.year())};
+        auto heure_debut{heure{static_cast<unsigned int>(hd.hour()), static_cast<unsigned int>(hd.minute())}};
+        auto heure_fin{heure{static_cast<unsigned int>(hf.hour()), static_cast<unsigned int>(hf.minute())}};
+
+        std::string nom = d_nom_input->text().toStdString();
+        std::string description = d_description_input->toPlainText().toStdString();
+        std::string localisation = d_localisation_input->text().toStdString();
+
+        rdv r{nom, d, heure_debut, heure_fin, description, localisation};
+
+        for(auto personne: d_participants_input->currentText())
+        {
+            auto p = d_lpersonne->rechercher(personne.toStdString());
+            r.ajouterParticipant(*p);
+        }
+
+        emit modifieRdv(d_rdv->nom(), r);
+        close();
     }
 }

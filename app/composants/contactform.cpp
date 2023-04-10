@@ -159,8 +159,8 @@ void ContactForm::onAjouter()
         std::string numero = d_numero_input->text().toStdString();
 
         personne p{nom, prenom, numero, email};
-        hide();
         emit ajoutPersonne(p);
+        close();
     }
 //    else
 //    {
@@ -180,8 +180,8 @@ void ContactForm::onModifier()
         std::string numero = d_numero_input->text().toStdString();
 
         personne p{nom, prenom, numero, email};
-        hide();
         emit modifiePersonne(*d_personne, p);
+        close();
     }
 //    else
 //    {

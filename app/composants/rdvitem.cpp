@@ -1,5 +1,6 @@
 #include "rdvitem.h"
 #include "event.h"
+#include "rdvform.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -8,9 +9,11 @@
 #include <QLabel>
 #include <QDate>
 
-RdvItem::RdvItem(const rdv& r, QWidget *parent) :
+RdvItem::RdvItem(const rdv& r, LRdv *rdvs, LPersonne *lpersonne, QWidget *parent) :
     QWidget(parent)
   , d_rdv{r}
+  , d_rdvs{rdvs}
+  , d_lpersonne{lpersonne}
 {
     creerInterface();
 }
@@ -52,7 +55,7 @@ void RdvItem::creerInterface()
     btnSupprimer->setAutoDefault(false);
 
     connect(btnAffiche, &QPushButton::clicked, this, &RdvItem::onAfficher);
- //   connect(btnModifier, &QPushButton::clicked, this, &RdvItem::onAfficherFormModif);
+    connect(btnModifier, &QPushButton::clicked, this, &RdvItem::onAfficherFormModif);
     connect(btnSupprimer, &QPushButton::clicked, this, &RdvItem::onSupprimer);
 
 
@@ -66,16 +69,17 @@ void RdvItem::creerInterface()
 
 void RdvItem::onAfficher()
 {
-    auto r{new Event(d_rdv, nullptr, nullptr, this)};
+    auto r{new Event(d_rdv, d_rdvs, d_lpersonne, this)};
     connect(r, &Event::deleted, this, &RdvItem::onSupprimer);
+    connect(r, &Event::updated, this, &RdvItem::onModifier);
     r->setModal(true);
     r->show();
 }
 
-//void RdvItem::onModifier(rdv ancien, rdv nouveau)
-//{
-//    emit updated(ancien, nouveau);
-//}
+void RdvItem::onModifier(std::string nom, const rdv& r)
+{
+    emit updated(nom, r);
+}
 
 void RdvItem::onSupprimer()
 {
@@ -85,10 +89,10 @@ void RdvItem::onSupprimer()
         emit deleted(d_rdv.nom());
 }
 
-/* void RdvItem::onAfficherFormModif()
+ void RdvItem::onAfficherFormModif()
 {
-    auto form {new RdvForm(d_rdv)};
+    auto form{new RdvForm(QDate::currentDate(), d_rdvs, d_lpersonne, &d_rdv)};
     form->setModal(true);
-    connect(form, &RdvForm::modifiePersonne, this, &RdvForm::onModifier);
+    connect(form, &RdvForm::modifieRdv, this, &RdvItem::onModifier);
     form->exec();
-} */
+}

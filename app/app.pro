@@ -18,7 +18,7 @@ SOURCES += \
     composants/rdvdialog.cpp \
     composants/rdvitem.cpp \
     main.cpp \
-    rdvform.cpp \
+    composants/rdvform.cpp \
     uagenda.cpp \
     ./../src/date.cpp \
     ./../src/heure.cpp \
@@ -37,7 +37,7 @@ HEADERS += \
     composants/event.h \
     composants/rdvdialog.h \
     composants/rdvitem.h \
-    rdvform.h \
+    composants/rdvform.h \
     uagenda.h \
     ./../src/date.h \
     ./../src/error.h \

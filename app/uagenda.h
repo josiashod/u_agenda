@@ -37,8 +37,8 @@ private slots:
     void onAjouterContact(personne p);
     void onAfficheRdv();
     void onSupprimerRdv(std::string nom);
-    void onAjoutRdv();
-
+    void onAjoutRdv(const rdv& r);
+    void onModifieRdv(std::string nom, const rdv& r);
 
 private:
     QDate d_currentDate;

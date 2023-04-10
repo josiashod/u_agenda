@@ -3,7 +3,7 @@
 #include "composants/contactsdialog.h"
 #include "composants/contactform.h"
 #include "composants/event.h"
-#include "rdvform.h"
+#include "composants/rdvform.h"
 
 #include <fstream>
 #include <QGridLayout>
@@ -24,8 +24,6 @@
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
     , d_currentDate{QDate::currentDate()}
-//    , d_contacts{nullptr}
-//    , d_rdvs{nullptr}
 {
     loadData();
     creerInterface();
@@ -36,9 +34,9 @@ UAgenda::UAgenda(QWidget *parent)
 
 UAgenda::~UAgenda()
 {
-//    saveData();
-//    delete d_contacts;
-//    delete d_rdvs;
+    saveData();
+    delete d_contacts;
+    delete d_rdvs;
 }
 
 void UAgenda::loadData()
@@ -358,11 +356,12 @@ void UAgenda::onRechercheRdv()
         QString texte;
         texte = "Résultat de \"" + d_search_in->text() + "\"";
         LRdv *tmp = d_rdvs->rechercherPlusieurs(d_search_in->text().toStdString());
-        auto rdvDialog{new RdvDialog(texte, tmp, this)};
+        auto rdvDialog{new RdvDialog(texte, tmp, d_rdvs, d_contacts, this)};
 
         rdvDialog->setModal(true);
         rdvDialog->show();
         connect(rdvDialog, &RdvDialog::deleted, this, &UAgenda::onSupprimerRdv);
+        connect(rdvDialog, &RdvDialog::updated, this, &UAgenda::onModifieRdv);
     }
 }
 
@@ -380,9 +379,10 @@ void UAgenda::onAfficheRdvsJour()
 
     auto rdvs = d_rdvs->trouverParDate({static_cast<unsigned int>(jour),
         static_cast<unsigned int>(mois), static_cast<unsigned int>(annee)});
-    auto rdvDialog{new RdvDialog(titre, rdvs, this)};
+    auto rdvDialog{new RdvDialog(titre, rdvs, d_rdvs, d_contacts, this)};
 
     connect(rdvDialog, &RdvDialog::deleted, this, &UAgenda::onSupprimerRdv);
+    connect(rdvDialog, &RdvDialog::updated, this, &UAgenda::onModifieRdv);
 
     rdvDialog->setModal(true);
     rdvDialog->show();
@@ -436,7 +436,7 @@ void UAgenda::onAjouter(QAction *action)
     }
     else
     {
-        auto form{new ContactForm()};
+        auto form{new ContactForm(nullptr, this)};
         form->setModal(true);
         connect(form, &ContactForm::ajoutPersonne, this, &UAgenda::onAjouterContact);
         form->exec();
@@ -449,8 +449,9 @@ void UAgenda::onAjouterContact(personne p)
     QMessageBox{QMessageBox::Information, tr("Information"), tr("Le contact a été ajouté avec succès")}.exec();
 }
 
-void UAgenda::onAjoutRdv()
+void UAgenda::onAjoutRdv(const rdv& r)
 {
+    d_rdvs->ajouter(r);
     afficheCalendrier();
 }
 
@@ -461,7 +462,18 @@ void UAgenda::onAfficheRdv()
     auto rdv = d_rdvs->trouverUn(button->text().toStdString());
 
     auto e{new Event(*rdv, d_rdvs, d_contacts, this)};
-    connect(e, &Event::deleted, this, &UAgenda::onSupprimerRdv);
     e->setModal(true);
+
+    connect(e, &Event::deleted, this, &UAgenda::onSupprimerRdv);
+    connect(e, &Event::updated, this, &UAgenda::onModifieRdv);
     e->exec();
 }
+
+void UAgenda::onModifieRdv(std::string nom, const rdv& r)
+{
+    rdv *nr = d_rdvs->trouverUn(nom);
+    *nr = r;
+
+    afficheCalendrier();
+}
+
