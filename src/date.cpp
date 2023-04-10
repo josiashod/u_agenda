@@ -102,7 +102,7 @@ bool date::operator<(const date& date) const
     return estAvant(date);
 }
 
-bool operator>=(const date& date) const
+bool date::operator>=(const date& date) const
 {
     return (!estAvant(date) || estMemeJourQue(date));
 }
