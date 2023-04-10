@@ -88,6 +88,11 @@ bool heure::operator==(const heure& h) const
     return estMemeHeureQue(h);
 }
 
+bool heure::operator!=(const heure& h) const
+{
+    return !estMemeHeureQue(h);
+}
+
 bool heure::operator>(const heure& h) const
 {
     return estAvant(h);
