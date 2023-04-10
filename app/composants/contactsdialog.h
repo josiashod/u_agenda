@@ -17,6 +17,16 @@ class ContactsDialog : public QDialog
 public:
     explicit ContactsDialog(LPersonne *contacts = nullptr, LRdv *rdvs = nullptr, QWidget *parent = nullptr);
     ~ContactsDialog();
+
+private:
+    QLineEdit *d_recherche;
+    QListWidget *d_list_contacts;
+    QPushButton *d_order_btn;
+    QString d_order;
+    LPersonne *d_contacts_default;
+    LPersonne *d_contacts;
+    LRdv *d_rdvs;
+
     void creerInterface();
     void afficherContacts();
     void afficherOrderButton();
@@ -27,15 +37,6 @@ public:
     void onExporter();
     void onImporter();
     void onOrder();
-
-private:
-    QLineEdit *d_recherche;
-    QListWidget *d_list_contacts;
-    QPushButton *d_order_btn;
-    QString d_order;
-    LPersonne *d_contacts_default;
-    LPersonne *d_contacts;
-    LRdv *d_rdvs;
 };
 
 #endif // CONTACTSDIALOG_H

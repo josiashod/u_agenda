@@ -10,10 +10,10 @@ class Contact : public QDialog
 
 public:
     explicit Contact(personne* p, QWidget *parent = nullptr);
-    void creerVue();
 
 private:
     personne* d_personne;
+    void creerVue();
 };
 
 #endif // CONTACT_H

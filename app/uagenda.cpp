@@ -4,6 +4,7 @@
 #include "composants/contactform.h"
 #include "composants/event.h"
 #include "composants/rdvform.h"
+#include "composants/exportcalendar.h"
 
 #include <fstream>
 #include <QGridLayout>
@@ -17,9 +18,7 @@
 #include <QMenu>
 #include <QFontDatabase>
 #include <QApplication>
-#include <QFileDialog>
 #include <QMessageBox>
-#include <QStandardPaths>
 
 UAgenda::UAgenda(QWidget *parent)
     : QWidget(parent)
@@ -399,30 +398,9 @@ void UAgenda::onExportRdv()
     if (!d_rdvs->tete())
         return;
 
-    QString directory = QDir::homePath();
-    QLocale locale = QLocale();
-
-    directory += "/" + QStandardPaths::displayName(QStandardPaths::DocumentsLocation) + "/";
-
-    QString fileName = QFileDialog::getSaveFileName(this,
-            tr("Sauvegarde de l'agenda"),
-            directory + "UAGENDA_" + locale.toString(QDate::currentDate(), "dd-MM-yyyy") + ".ics",
-            tr("iCalendar files(*.ics *ifb *.iCal *.icalendar)"));
-
-    if (fileName.isEmpty())
-            return;
-    else
-    {
-        QFile file(fileName);
-        if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::information(this, tr("Impossible d'ouvrir le fichier"),
-                file.errorString());
-            return;
-        }
-//        QDataStream out(&file);
-//            out.setVersion(QDataStream::Qt_4_5);
-//            out << contacts;
-    }
+    auto exportC{new ExportCalendar(d_rdvs, this)};
+    exportC->setModal(true);
+    exportC->exec();
 }
 
 void UAgenda::onAjouter(QAction *action)

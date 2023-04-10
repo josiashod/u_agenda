@@ -15,9 +15,6 @@ class ContactForm : public QDialog
 public:
     explicit ContactForm(personne* p = nullptr, QWidget *parent = nullptr);
     ~ContactForm();
-    void createForm();
-    bool verifieForm();
-    void afficheErreur();
 
 private slots:
     void onAjouter();
@@ -38,6 +35,10 @@ private:
     QLabel* d_prenom_erreur;
     QLabel* d_numero_erreur;
     QLabel* d_email_erreur;
+
+    void createForm();
+    bool verifieForm();
+    void afficheErreur();
 };
 
 #endif // CONTACTFORM_H

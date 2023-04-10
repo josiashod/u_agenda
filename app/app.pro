@@ -15,6 +15,7 @@ SOURCES += \
     composants/contactitem.cpp \
     composants/contactsdialog.cpp \
     composants/event.cpp \
+    composants/exportcalendar.cpp \
     composants/rdvdialog.cpp \
     composants/rdvitem.cpp \
     main.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     composants/contactitem.h \
     composants/contactsdialog.h \
     composants/event.h \
+    composants/exportcalendar.h \
     composants/rdvdialog.h \
     composants/rdvitem.h \
     composants/rdvform.h \
