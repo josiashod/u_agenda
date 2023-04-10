@@ -265,7 +265,7 @@ void RdvForm::afficheErreur()
 bool RdvForm::overlapRDV()
 {
     bool overlap = false;
-    bool participantChange = false;
+    int i = 0;
 
     QStringList participant = d_participants_input->currentText();
     QString texte = "";
@@ -277,9 +277,8 @@ bool RdvForm::overlapRDV()
 
     auto heure_debut{heure{static_cast<unsigned int>(hd.hour()), static_cast<unsigned int>(hd.minute())}};
     auto heure_fin{heure{static_cast<unsigned int>(hf.hour()), static_cast<unsigned int>(hf.minute())}};
-    int i = 0;
 
-    if(d_rdv->participants())
+    if(d_rdv && d_rdv->participants())
     {
         personne *crt = d_rdv->participants()->tete();
         while(crt)
@@ -291,9 +290,10 @@ bool RdvForm::overlapRDV()
         }
     }
 
-    if(participant.length() || !(heure_debut == d_rdv->h_debut()) || !(heure_fin == d_rdv->h_fin()) || !(d == d_rdv->day()))
+    if(participant.length() || (d_rdv && (!(heure_debut == d_rdv->h_debut()) || !(heure_fin == d_rdv->h_fin()) || !(d == d_rdv->day()))))
     {
-        for(auto personne: d_participants_input->currentText())
+        participant = (participant.length() == 0) ? d_participants_input->currentText() : participant;
+        for(auto personne: participant)
         {
             auto p = d_lpersonne->rechercher(personne.toStdString());
 
@@ -322,7 +322,6 @@ bool RdvForm::overlapRDV()
 void RdvForm::onAjouter()
 {
     afficheErreur();
-
     if(verifieForm())
     {
         auto qdate = d_date_input->date();
