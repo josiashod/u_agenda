@@ -290,7 +290,7 @@ bool RdvForm::overlapRDV()
         }
     }
 
-    if(participant.length() || (d_rdv && (!(heure_debut == d_rdv->h_debut()) || !(heure_fin == d_rdv->h_fin()) || !(d == d_rdv->day()))))
+    if(participant.length() || (d_rdv && (heure_debut != d_rdv->h_debut() || heure_fin != d_rdv->h_fin() || d != d_rdv->day())))
     {
         participant = (participant.length() == 0) ? d_participants_input->currentText() : participant;
         for(auto personne: participant)
