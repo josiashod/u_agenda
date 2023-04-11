@@ -48,6 +48,9 @@ void UAgenda::loadData()
 
     std::ifstream e_ifs("U_AGENDAEVENT.log");
     d_rdvs->load(e_ifs);
+
+    c_ifs.close();
+    e_ifs.close();
 }
 
 void UAgenda::saveData()
@@ -59,6 +62,9 @@ void UAgenda::saveData()
         d_contacts->save(c_ofs);
     if (d_rdvs && d_rdvs->tete())
         d_rdvs->save(e_ofs);
+
+    c_ofs.close();
+    e_ofs.close();
 }
 
 void UAgenda::setPolice()

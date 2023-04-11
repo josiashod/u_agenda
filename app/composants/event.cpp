@@ -19,12 +19,13 @@ Event::Event(const rdv& r, LRdv *lrdv, LPersonne *lpersonne, QWidget *parent) :
 void Event::creerVue()
 {
     setWindowTitle(QString::fromStdString(d_rdv.nom()));
-    setMinimumSize(300, 202);
+//    setMinimumSize(450, 652);
 
     auto main{new QVBoxLayout(this)};
 
     d_nom_label = new QLabel{""};
     d_nom_label->setStyleSheet("QLabel {font-weight: 4; font-size: 24px}");
+    d_nom_label->setFixedWidth(400);
     main->addWidget(d_nom_label);
     main->addSpacing(2);
 
@@ -83,9 +84,13 @@ void Event::afficherRdv()
         personne *crt = d_rdv.participants()->tete();
         while(crt){
             details += QString::fromStdString(crt->nomComplet()) + "\n";
+            details += QString::fromStdString(crt->email()) + "\n";
+            details += QString::fromStdString(crt->numero());
             crt = crt->suivant();
-        }
 
+            if(crt)
+                details += "\n\n";
+        }
         d_participants_label->setText(details);
     }
 }
