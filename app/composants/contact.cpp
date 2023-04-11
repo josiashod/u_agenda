@@ -1,13 +1,22 @@
 #include "contact.h"
+#include "rdvdialog.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 
-Contact::Contact(personne* p, QWidget *parent) :
+Contact::Contact(personne* p, LRdv *lrdv, QWidget *parent) :
     QDialog(parent),
-    d_personne{p}
+    d_personne{p},
+    d_lrdv{lrdv}
 {
     creerVue();
+}
+
+Contact::~Contact()
+{
+    if(d_lrdv);
+        delete d_lrdv;
 }
 
 void Contact::creerVue()
@@ -36,4 +45,17 @@ void Contact::creerVue()
     email->setTextInteractionFlags(Qt::TextSelectableByMouse);
     main->addWidget(email);
     main->addSpacing(15);
+
+    auto btn{new QPushButton{"Voir les rendez-vous"}};
+    connect(btn, &QPushButton::clicked, this, &Contact::onAfficheRdv);
+    main->addWidget(btn, 1, Qt::AlignBottom);
+}
+
+void Contact::onAfficheRdv()
+{
+    auto texte = "Rendez-vous de " + QString::fromStdString(d_personne->nomComplet());
+    auto rdvDialog{new RdvDialog(texte, d_lrdv, nullptr, nullptr, this)};
+
+    rdvDialog->setModal(true);
+    rdvDialog->show();
 }

@@ -97,7 +97,7 @@ void ContactsDialog::afficherContacts()
             item->setSizeHint(QSize(0, 60));
             item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 
-            auto contact{new ContactItem(crt)};
+            auto contact{new ContactItem(crt, d_rdvs->trouverParPersonne(*crt))};
 
             connect(contact, &ContactItem::updated, this, &ContactsDialog::onModifier);
             connect(contact, &ContactItem::deleted, this, &ContactsDialog::onSupprimer);

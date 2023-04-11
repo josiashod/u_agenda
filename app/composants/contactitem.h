@@ -3,13 +3,14 @@
 
 #include <QWidget>
 #include "./../src/lpersonne.h"
+#include "./../src/lrdv.h"
 
 class ContactItem: public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ContactItem(personne *p, QWidget *parent = nullptr);
+    explicit ContactItem(personne *p, LRdv *lrdv = nullptr, QWidget *parent = nullptr);
     ~ContactItem();
     void creerItem();
 
@@ -26,6 +27,7 @@ signals:
 
 private:
     personne* d_personne;
+    LRdv* d_lrdv;
 };
 
 #endif // CONTACTITEM_H

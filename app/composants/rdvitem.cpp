@@ -45,23 +45,23 @@ void RdvItem::creerInterface()
 
     ligne->addLayout(info, 1);
 
-    auto btnAffiche{new QPushButton(QIcon(":/icons/eye.svg"), "")};
-    btnAffiche->setAutoDefault(false);
+    if(d_lpersonne && d_lpersonne->tete())
+    {
+        auto btnAffiche{new QPushButton(QIcon(":/icons/eye.svg"), "")};
+        btnAffiche->setAutoDefault(false);
+        auto btnModifier{new QPushButton(QIcon(":/icons/pencil-square.svg"), "")};
+        btnModifier->setAutoDefault(false);
+        auto btnSupprimer{new QPushButton(QIcon(":/icons/trash.svg"), "")};
+        btnSupprimer->setAutoDefault(false);
 
-    auto btnModifier{new QPushButton(QIcon(":/icons/pencil-square.svg"), "")};
-    btnModifier->setAutoDefault(false);
+        connect(btnAffiche, &QPushButton::clicked, this, &RdvItem::onAfficher);
+        connect(btnModifier, &QPushButton::clicked, this, &RdvItem::onAfficherFormModif);
+        connect(btnSupprimer, &QPushButton::clicked, this, &RdvItem::onSupprimer);
 
-    auto btnSupprimer{new QPushButton(QIcon(":/icons/trash.svg"), "")};
-    btnSupprimer->setAutoDefault(false);
-
-    connect(btnAffiche, &QPushButton::clicked, this, &RdvItem::onAfficher);
-    connect(btnModifier, &QPushButton::clicked, this, &RdvItem::onAfficherFormModif);
-    connect(btnSupprimer, &QPushButton::clicked, this, &RdvItem::onSupprimer);
-
-
-    ligne->addWidget(btnAffiche, 0, Qt::AlignRight|Qt::AlignCenter);
-    ligne->addWidget(btnModifier, 0, Qt::AlignRight|Qt::AlignCenter);
-    ligne->addWidget(btnSupprimer, 0, Qt::AlignRight|Qt::AlignCenter);
+        ligne->addWidget(btnAffiche, 0, Qt::AlignRight|Qt::AlignCenter);
+        ligne->addWidget(btnModifier, 0, Qt::AlignRight|Qt::AlignCenter);
+        ligne->addWidget(btnSupprimer, 0, Qt::AlignRight|Qt::AlignCenter);
+    }
 
 
     setLayout(ligne);

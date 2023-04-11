@@ -8,9 +8,10 @@
 #include <QPushButton>
 #include <QMessageBox>
 
-ContactItem::ContactItem(personne *p, QWidget *parent) :
+ContactItem::ContactItem(personne *p, LRdv *lrdv, QWidget *parent) :
     QWidget(parent),
-    d_personne{p}
+    d_personne{p},
+    d_lrdv{lrdv}
 {
     creerItem();
 }
@@ -60,7 +61,7 @@ void ContactItem::creerItem()
 
 void ContactItem::onAfficher()
 {
-    auto contact{new Contact(d_personne, this)};
+    auto contact{new Contact(d_personne, d_lrdv, this)};
     contact->setModal(true);
     contact->show();
 }
