@@ -10,7 +10,6 @@
 
 class QLabel;
 class QLineEdit;
-class QTextEdit;
 class QDateTimeEdit;
 
 class RdvForm: public QDialog
@@ -38,7 +37,7 @@ private:
     LRdv *d_lrdv;
     LPersonne *d_lpersonne;
     QLineEdit* d_nom_input;
-    QTextEdit* d_description_input;
+    QLineEdit* d_description_input;
     QLineEdit* d_localisation_input;
     QDateTimeEdit* d_date_input;
     QDateTimeEdit* d_hd_input;

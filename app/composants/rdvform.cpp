@@ -2,7 +2,6 @@
 
 #include <QMessageBox>
 #include <QLineEdit>
-#include <QTextEdit>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -47,7 +46,7 @@ void RdvForm::createForm()
     d_nom_erreur->setStyleSheet("QLabel{ color: #e11d48 }");
     GrilleLayout->addWidget(d_nom_erreur, 1, 1);
 
-    d_description_input = new QTextEdit();
+    d_description_input = new QLineEdit();
     d_description_input->setPlaceholderText("Description du rendez-vous");
     GrilleLayout->addWidget(d_description_input, 2, 1);
     d_description_erreur = new QLabel{""};
@@ -177,7 +176,7 @@ bool RdvForm::verifieForm()
         return false;
     if (!d_participants_input->currentText().length())
         return false;
-    if (d_description_input->toPlainText().length() <= 2)
+    if (d_description_input->text().length() <= 2)
         return false;
     if (d_localisation_input->text().length() <= 2)
         return false;
@@ -231,9 +230,9 @@ void RdvForm::afficheErreur()
     else
         d_nom_erreur->setText("");
 
-    if(!d_description_input->toPlainText().length())
+    if(!d_description_input->text().length())
         d_description_erreur->setText("Veuillez entrer une description");
-    else if(d_description_input->toPlainText().length() <= 2)
+    else if(d_description_input->text().length() <= 2)
         d_description_erreur->setText("La description doit comporter au moins 3 caractères");
     else
         d_description_erreur->setText("");
@@ -335,7 +334,7 @@ void RdvForm::onAjouter()
         auto heure_fin{heure{static_cast<unsigned int>(hf.hour()), static_cast<unsigned int>(hf.minute())}};
 
         std::string nom = d_nom_input->text().toStdString();
-        std::string description = d_description_input->toPlainText().toStdString();
+        std::string description = d_description_input->text().toStdString();
         std::string localisation = d_localisation_input->text().toStdString();
 
         rdv r{nom, d, heure_debut, heure_fin, description, localisation};
@@ -368,7 +367,7 @@ void RdvForm::onModifier()
         auto heure_fin{heure{static_cast<unsigned int>(hf.hour()), static_cast<unsigned int>(hf.minute())}};
 
         std::string nom = d_nom_input->text().toStdString();
-        std::string description = d_description_input->toPlainText().toStdString();
+        std::string description = d_description_input->text().toStdString();
         std::string localisation = d_localisation_input->text().toStdString();
 
         rdv r{nom, d, heure_debut, heure_fin, description, localisation};
