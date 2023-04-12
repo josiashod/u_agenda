@@ -35,7 +35,7 @@ class LRdv
         void exporterDans(const std::string fichier) const;
         void exporter(std::ostream& ost, const rdv& r) const; // exporte un seul rendez-vous
         void save(std::ostream& ost) const;
-        void load(std::istream& ist);
+        void load(std::istream& ist, LPersonne* lpersonne = nullptr);
         LRdv* rechercherPlusieurs(std::string str) const;
 
     private:

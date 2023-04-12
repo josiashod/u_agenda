@@ -230,10 +230,10 @@ void LRdv::save(std::ostream& ost) const
         crt = crt->d_suiv;
     }
 
-    ost << "END:LRDV" << std::endl;
+    ost << "END:LRDV" << std::endl  << std::endl;
 }
 
-void LRdv::load(std::istream& ist)
+void LRdv::load(std::istream& ist, LPersonne* lpersonne)
 {
     std::string ligne{""};
 
@@ -244,7 +244,7 @@ void LRdv::load(std::istream& ist)
     while(!ist.eof())
     {
         rdv *r{new rdv{}};
-        ist >> *r;
+        r->load(ist, lpersonne);
 
         if(!r->nom().empty())
             ajouter(*r);

@@ -149,11 +149,19 @@ void rdv::save(std::ostream& ost) const
     ost << d_horaires[0];
     ost << d_horaires[1];
     if (d_participants)
-        ost << *d_participants;
+    {
+        personne* crt = d_participants->tete();
+
+        while(crt)
+        {
+            ost << crt->nomComplet() << std::endl;
+            crt = crt->suivant();
+        }
+    }
     ost << "END:RDV" << std::endl;
 }
 
-void rdv::load(std::istream& ist)
+void rdv::load(std::istream& ist, LPersonne* lpersonne)
 {
     std::string ligne{""};
 
@@ -174,15 +182,23 @@ void rdv::load(std::istream& ist)
     ist >> d_horaires[1];
 
     int ist_pos = ist.tellg();
-    ist >> ligne;
-    if(ligne == "BEGIN:LPERSONNE")
-    {
-        ist.seekg(ist_pos + 1);
-        d_participants = new LPersonne();
-        ist >> (*d_participants);
-    }
+    ist.seekg(ist_pos + 1);
+    getline(ist, ligne);
 
-    // ist >> ligne;
+    d_participants = new LPersonne();
+    while(!ist.eof() && ligne != "END:RDV")
+    {
+        if(lpersonne)
+        {
+            personne *p = lpersonne->rechercher(ligne);
+            if(p)
+            {
+                d_participants->ajouter(*p);
+            }
+        }
+        getline(ist, ligne);
+    }
+    std::cout << std::endl;
 }
 
 std::string timestamp(date d, heure h)
