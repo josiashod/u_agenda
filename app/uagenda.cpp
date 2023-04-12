@@ -47,7 +47,7 @@ void UAgenda::loadData()
     d_contacts->load(c_ifs);
 
     std::ifstream e_ifs("U_AGENDAEVENT.log");
-    d_rdvs->load(e_ifs);
+    d_rdvs->load(e_ifs, d_contacts);
 
     c_ifs.close();
     e_ifs.close();
