@@ -2,7 +2,7 @@
 
 ## À propos
 
-U-AGENDA est une pplication de gesion d’un carnet de rendez-
+U-AGENDA est une application de gesion d’un carnet de rendez-
 vous basée sur l'utilisation des listes chaînées
 
 ## Table des matières
