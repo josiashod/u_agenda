@@ -7,6 +7,7 @@
 #include "composants/exportcalendar.h"
 
 #include <fstream>
+#include <QScreen>
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -83,7 +84,11 @@ void UAgenda::creerInterface()
 {
     setWindowTitle("UAGENDA");
     setWindowIcon(QIcon(":/logo/"+ QString::number(d_currentDate.day()) +".png"));
-    setMinimumSize(1650, 830);
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect  screenGeometry = screen->geometry();
+    int height = screenGeometry.height();
+    int width = screenGeometry.width();
+    setMinimumSize(width - 400, height - 400);
     setPolice();
 //    setShortcutEnabled();
 

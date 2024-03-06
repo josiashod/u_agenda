@@ -15,7 +15,7 @@ Contact::Contact(personne* p, LRdv *lrdv, QWidget *parent) :
 
 Contact::~Contact()
 {
-    if(d_lrdv);
+    if(d_lrdv)
         delete d_lrdv;
 }
 
