@@ -233,7 +233,7 @@ void LRdv::save(std::ostream& ost) const
     while(crt != nullptr)
     {
         ost << ',' << std::endl;
-        d_tete->save(ost, 1);
+        crt->save(ost, 1);
         crt = crt->d_suiv;
     }
 
