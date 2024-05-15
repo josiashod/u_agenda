@@ -220,31 +220,38 @@ void LRdv::save(std::ostream& ost) const
 {
 	if(!d_tete)
 		return;
+	
+	rdv *crt = nullptr;
+    ost << "[" << std::endl;
 
-    ost << "BEGIN:LRDV" << std::endl;
+    if(d_tete)
+    {
+        d_tete->save(ost, 1);
+        crt = d_tete->d_suiv;
+    }
 
-    rdv *crt = d_tete;
     while(crt != nullptr)
     {
-        ost << *crt;
+        ost << ',' << std::endl;
+        d_tete->save(ost, 1);
         crt = crt->d_suiv;
     }
 
-    ost << "END:LRDV" << std::endl  << std::endl;
+    ost << std::endl << "]";
 }
 
-void LRdv::load(std::istream& ist, LPersonne* lpersonne)
+void LRdv::load(std::istream& ist)
 {
+    const std::regex end_rgx{R"(.*])"};
+    std::smatch match;
     std::string ligne{""};
 
     getline(ist, ligne);
-    if (ligne != "BEGIN:LRDV")
-        return;
 
     while(!ist.eof())
     {
         rdv *r{new rdv{}};
-        r->load(ist, lpersonne);
+        r->load(ist);
 
         if(!r->nom().empty())
             ajouter(*r);

@@ -45,7 +45,7 @@ class rdv
 
         //METHODES
         void save(std::ostream& ost, int profondeur = 1) const;
-        void load(std::istream& ist, LPersonne* lpersonne = nullptr);
+        void load(std::istream& ist);
         void exporter(std::ostream& ost) const;
         bool estAvant(const rdv& r) const;
         bool overlap(const date& d, const heure& debut, const heure& fin) const;

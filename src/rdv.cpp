@@ -157,7 +157,7 @@ void rdv::save(std::ostream& ost, int profondeur) const
     ost << std::string(profondeur - 1, '\t') + "}";
 }
 
-void rdv::load(std::istream& ist, LPersonne* lpersonne)
+void rdv::load(std::istream& ist)
 {
     std::string ligne{""};
 
