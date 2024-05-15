@@ -30,7 +30,7 @@ class LPersonne {
         int supprimer(std::string nomComplet);
         int supprimer(const personne& p);
 
-        void save(std::ostream& ost) const;
+        void save(std::ostream& ost, int profondeur = 1) const;
         void load(std::istream& ist);
         void exporter(std::ostream& ost) const;
         void exporterDans(const std::string fichier) const;

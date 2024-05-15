@@ -1,5 +1,7 @@
 #include "rdv.h"
 #include "lpersonne.h"
+#include "parser.h"
+#include <sstream>
 
 // CONSTRUCTEURS + DESTRUCTEUR
 rdv::rdv(): d_nom{""}
@@ -13,7 +15,7 @@ rdv::rdv(std::string nom, date d, heure h_debut
     , d_horaires{h_debut, h_fin}
     , d_description{description}
     , d_localisation{localisation}
-    , d_participants{nullptr}
+    , d_participants{new LPersonne()}
     , d_suiv{nullptr}
     // , d_prec{nullptr}
 {}
@@ -38,7 +40,7 @@ rdv::rdv(const rdv& r):
     , d_horaires{r.d_horaires[0], r.d_horaires[1]}
     , d_description{r.d_description}
     , d_localisation{r.d_localisation}
-    , d_participants{nullptr}
+    , d_participants{}
     , d_suiv{nullptr}
     // , d_prec{nullptr}
 {
@@ -48,7 +50,8 @@ rdv::rdv(const rdv& r):
 
 rdv::~rdv()
 {
-    delete d_participants;
+    if(d_participants)
+        delete d_participants;
 }
 
 
@@ -139,66 +142,58 @@ rdv* rdv::suivant() const
     return d_suiv;
 }
 
-void rdv::save(std::ostream& ost) const
+void rdv::save(std::ostream& ost, int profondeur) const
 {
-    ost << "BEGIN:RDV" << std::endl;
-    ost << d_nom << std::endl;
-    ost << (d_description.length() ? d_description : "NULL") << std::endl;
-    ost << (d_localisation.length() ? d_localisation : "NULL") << std::endl;
-    ost << d_date;
-    ost << d_horaires[0];
-    ost << d_horaires[1];
-    if (d_participants)
-    {
-        personne* crt = d_participants->tete();
-
-        while(crt)
-        {
-            ost << crt->nomComplet() << std::endl;
-            crt = crt->suivant();
-        }
-    }
-    ost << "END:RDV" << std::endl;
+    ost << std::string(profondeur - 1, '\t') + "{" << std::endl;
+    ost << std::string(profondeur, '\t') + "\"nom\":" << " \"" + d_nom + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"description\":" << " \"" + d_description + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"localisation\":" << " \"" + d_localisation + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"date\":" << " \"" + d_date.toString() + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"heure de debut\":" << " \"" + d_horaires[0].toString() + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"heure de fin\":" << " \"" + d_horaires[1].toString() + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"participants\":";
+    d_participants->save(ost, profondeur + 1);
+    ost << std::endl;
+    ost << std::string(profondeur - 1, '\t') + "}";
 }
 
 void rdv::load(std::istream& ist, LPersonne* lpersonne)
 {
     std::string ligne{""};
 
+    // on recupere la premiere parenthèse
     getline(ist, ligne);
-    if (ligne != "BEGIN:RDV")
-        return;
 
-    getline(ist, d_nom, '\n');
-    getline(ist, d_description, '\n');
-    if(d_description == "NULL")
-        d_description = "";
-    getline(ist, d_localisation, '\n');
-    if(d_localisation == "NULL")
-        d_localisation = "";
-
-    ist >> d_date;
-    ist >> d_horaires[0];
-    ist >> d_horaires[1];
-
-    int ist_pos = ist.tellg();
-    ist.seekg(ist_pos + 1);
+    // on recupere le nom
     getline(ist, ligne);
+    d_nom = attribute_extrator(ligne).value;
+
+    // on recupere la description
+    getline(ist, ligne);
+    d_description = attribute_extrator(ligne).value;
+
+    // on recupere la localisation
+    getline(ist, ligne);
+    d_localisation = attribute_extrator(ligne).value;
+
+    // on recupere la date
+    getline(ist, ligne);
+    std::istringstream date_in(attribute_extrator(ligne).value);
+    date_in >> d_date;
+
+    // on recupere l'heure de debut
+    getline(ist, ligne);
+    std::istringstream debut_in(attribute_extrator(ligne).value);
+    debut_in >> d_horaires[0];
+
+    // on recupere l'heure de fin
+    getline(ist, ligne);
+    std::istringstream fin_in(attribute_extrator(ligne).value);
+    fin_in >> d_horaires[1];
 
     d_participants = new LPersonne();
-    while(!ist.eof() && ligne != "END:RDV")
-    {
-        if(lpersonne)
-        {
-            personne *p = lpersonne->rechercher(ligne);
-            if(p)
-            {
-                d_participants->ajouter(*p);
-            }
-        }
-        getline(ist, ligne);
-    }
-    std::cout << std::endl;
+    ist >> *d_participants;
+    getline(ist, ligne);
 }
 
 std::string timestamp(date d, heure h)

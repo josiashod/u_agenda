@@ -136,14 +136,14 @@ bool personne::vientAvant(const personne& p) const
     return (nomComplet().compare(p.nomComplet()) < 0);
 }
 
-void personne::affiche(std::ostream& ost) const
+void personne::affiche(std::ostream& ost, int profondeur) const
 {
-    ost << "{" << std::endl;
-    ost << "\t\"nom\":" << " \"" + d_nom + "\"," << std::endl;
-    ost << "\t\"prenom\":" << " \"" + d_prenom + "\"," << std::endl;
-    ost << "\t\"numero\":" << " \"" + d_numero + "\"," << std::endl;
-    ost << "\t\"email\":" << " \"" + d_email + "\"" << std::endl;
-    ost << "}" << std::endl;
+    ost << std::string(profondeur - 1, '\t') + "{" << std::endl;
+    ost << std::string(profondeur, '\t') + "\"nom\":" << " \"" + d_nom + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"prenom\":" << " \"" + d_prenom + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"numero\":" << " \"" + d_numero + "\"," << std::endl;
+    ost << std::string(profondeur, '\t') + "\"email\":" << " \"" + d_email + "\"" << std::endl;
+    ost << std::string(profondeur - 1, '\t') + "}";
 }
 
 void personne::lire(std::istream &ist)
@@ -155,19 +155,19 @@ void personne::lire(std::istream &ist)
 
     // on recupere la ligne du nom
     getline(ist, ligne);
-    d_nom = value(ligne).value;
+    d_nom = attribute_extrator(ligne).value;
 
     // on recupere la ligne du prenom
     getline(ist, ligne);
-    d_prenom = value(ligne).value;
+    d_prenom = attribute_extrator(ligne).value;
 
     // on recupere la ligne du numero
     getline(ist, ligne);
-    d_numero = value(ligne).value;
+    d_numero = attribute_extrator(ligne).value;
 
     // on recupere la ligne du email
     getline(ist, ligne);
-    d_email = value(ligne).value;
+    d_email = attribute_extrator(ligne).value;
     getline(ist, ligne);
 }
 

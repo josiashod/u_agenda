@@ -44,7 +44,7 @@ class rdv
         rdv* suivant() const;
 
         //METHODES
-        void save(std::ostream& ost) const;
+        void save(std::ostream& ost, int profondeur = 1) const;
         void load(std::istream& ist, LPersonne* lpersonne = nullptr);
         void exporter(std::ostream& ost) const;
         bool estAvant(const rdv& r) const;

@@ -264,31 +264,33 @@ int LPersonne::supprimer(const personne& p)
     return (OK);
 }
 
-void LPersonne::save(std::ostream& ost) const
+void LPersonne::save(std::ostream& ost, int profondeur) const
 {
-    if(!d_tete)
-        return;
-
-    ost << "BEGIN:LPERSONNE" << std::endl;
+    personne *crt = nullptr;
+    ost << "[" << std::endl;
     
-    personne *crt = d_tete;
-    while(crt != nullptr)
+    if(d_tete)
     {
-        ost << *crt;
-        crt = crt->d_suiv;
+        d_tete->affiche(ost, profondeur + 1);
+        crt = d_tete->d_suiv;
     }
 
-    ost << "END:LPERSONNE" << std::endl;
+    while(crt != nullptr)
+    {
+        ost << ',' << std::endl;
+        crt->affiche(ost, profondeur + 1);
+        crt = crt->d_suiv;
+    }
+    ost << std::endl << std::string(profondeur - 1, '\t') + "]";
 }
 
 void LPersonne::load(std::istream& ist)
 {
+    const std::regex end_rgx{R"(.*])"};
+    std::smatch match;
     std::string ligne{""};
 
     getline(ist, ligne);
-
-    if (ligne != "BEGIN:LPERSONNE")
-        return;
 
     while(!ist.eof())
     {
@@ -298,8 +300,8 @@ void LPersonne::load(std::istream& ist)
             ajouter(p);
         
         int ist_lastpos = ist.tellg();
-        ist >> ligne;
-        if(ligne == "END:LPERSONNE")
+        getline(ist, ligne);
+        if(std::regex_match(ligne, match, end_rgx))
             break;
         else
             ist.seekg(ist_lastpos);

@@ -3,12 +3,14 @@
 
 #include <regex>
 
-const std::regex ATTRIBUTE_PARSER{R"("(\w+)\": ?\"(.+)\")"};
+const std::regex ATTRIBUTE_PARSER{R"("(.+)\": ?\"(.+)\")"};
+const std::regex KEY_PARSER{R"("(\w+)\":)"};
 
 struct attr{
     std::string key, value;
 };
 
-attr value(const std::string &);
+attr attribute_extrator(const std::string &);
+// std::string key_extractor(const std::string &);
 
 #endif

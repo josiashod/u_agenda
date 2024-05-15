@@ -38,7 +38,7 @@ class personne
         std::string nomComplet() const;
         bool contient(std::string& str) const;
         bool vientAvant(const personne& p) const;
-        void affiche(std::ostream& ost = std::cout) const;
+        void affiche(std::ostream& ost = std::cout, int profondeur = 1) const;
         void lire(std::istream& ist = std::cin);
         void exporter(std::ostream& ost) const;
         void importer(std::istream& ist);
