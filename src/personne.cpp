@@ -1,5 +1,6 @@
 #include "personne.h"
 #include "error.h"
+#include "parser.h"
 
 // CONSTRUCTEURS
 personne::personne() : d_status{OK}
@@ -137,33 +138,37 @@ bool personne::vientAvant(const personne& p) const
 
 void personne::affiche(std::ostream& ost) const
 {
-    ost << "{\"" + d_nom + "\", \"" + d_prenom + "\", "
-    + d_numero + ", " + d_email + '}' << std::endl;
+    ost << "{" << std::endl;
+    ost << "\t\"nom\":" << " \"" + d_nom + "\"," << std::endl;
+    ost << "\t\"prenom\":" << " \"" + d_prenom + "\"," << std::endl;
+    ost << "\t\"numero\":" << " \"" + d_numero + "\"," << std::endl;
+    ost << "\t\"email\":" << " \"" + d_email + "\"" << std::endl;
+    ost << "}" << std::endl;
 }
 
 void personne::lire(std::istream &ist)
 {
     std::string ligne;
-    std::size_t start_pos = 2, end_pos;
 
+    // on recupere la premiere parenthèse
     getline(ist, ligne);
 
-    end_pos = ligne.find(",");
-    d_nom = ligne.substr(start_pos, end_pos - 3);
-    ligne = ligne.substr(end_pos + 3, ligne.length());
+    // on recupere la ligne du nom
+    getline(ist, ligne);
+    d_nom = value(ligne).value;
 
-    start_pos = 0;
-    end_pos = ligne.find(",");
+    // on recupere la ligne du prenom
+    getline(ist, ligne);
+    d_prenom = value(ligne).value;
 
-    d_prenom = ligne.substr(start_pos, end_pos - 1);
-    ligne = ligne.substr(end_pos + 2, ligne.length());
+    // on recupere la ligne du numero
+    getline(ist, ligne);
+    d_numero = value(ligne).value;
 
-    start_pos = 0;
-    end_pos = ligne.find(",");
-
-    d_numero = ligne.substr(start_pos, end_pos);
-    ligne = ligne.substr(end_pos + 2, ligne.length());
-    d_email = ligne.substr(0, ligne.length() - 1);
+    // on recupere la ligne du email
+    getline(ist, ligne);
+    d_email = value(ligne).value;
+    getline(ist, ligne);
 }
 
 void personne::exporter(std::ostream& ost) const
