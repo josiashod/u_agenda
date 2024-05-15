@@ -22,6 +22,7 @@ SOURCES += \
     composants/rdvform.cpp \
     uagenda.cpp \
     ./../src/date.cpp \
+    ./../src/parser.cpp \
     ./../src/heure.cpp \
     ./../src/personne.cpp \
     ./../src/lpersonne.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     ./../src/personne.h \
     ./../src/lpersonne.h \
     ./../src/rdv.h \
+    ./../src/parser.h \
     ./../src/lrdv.h
 
 
