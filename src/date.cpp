@@ -55,7 +55,14 @@ std::istream& operator>>(std::istream& ist, date& d)
 
 void date::affiche(std::ostream& ost) const
 {
-    ost << d_jour << "/" << d_mois << "/" << d_annee << std::endl;
+    if(d_jour < 10)
+        ost << '0';
+    ost << d_jour << "/";
+    if(d_mois < 10)
+        ost << '0';
+    ost << d_mois << "/";
+
+    ost << d_annee;
 }
 
 std::ostream& operator<<(std::ostream& ost, const date& d)

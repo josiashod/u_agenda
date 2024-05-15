@@ -40,8 +40,12 @@ std::string heure::toString() const
 
 void heure::affiche(std::ostream& ost) const
 {
-    ost << d_h << ":" << d_mn << std::endl;
-
+    if(d_h < 10)
+        ost << '0';
+    ost << d_h << ":";
+    if(d_mn < 10)
+        ost << '0';
+    ost << d_mn;
 }
 
 std::ostream& operator<<(std::ostream& ost, const heure& h)
