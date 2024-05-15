@@ -52,17 +52,26 @@ std::istream& operator>>(std::istream& ist, date& d)
     d.lire(ist);
     return ist;
 }
+std::string date::toString() const
+{
+    std::string str = "";
+
+    str += ((d_jour < 10) ? "0" : "") + std::to_string(d_jour) + "/";
+    str += ((d_mois < 10) ? "0" : "") + std::to_string(d_mois) + "/";
+    if (d_annee < 1000)
+        str += "0";
+    if (d_annee < 100)
+        str += "0";
+    if (d_annee < 10)
+        str += "0";
+    str += std::to_string(d_annee);
+
+    return str;
+}
 
 void date::affiche(std::ostream& ost) const
 {
-    if(d_jour < 10)
-        ost << '0';
-    ost << d_jour << "/";
-    if(d_mois < 10)
-        ost << '0';
-    ost << d_mois << "/";
-
-    ost << d_annee;
+    ost << toString();
 }
 
 std::ostream& operator<<(std::ostream& ost, const date& d)

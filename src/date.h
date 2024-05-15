@@ -20,6 +20,7 @@ class date
 
         void lire(std::istream& ist);
         friend std::istream& operator>>(std::istream& ist, date& d);
+        std::string toString() const;
         void affiche(std::ostream& ost) const;
         friend std::ostream& operator<<(std::ostream& ost, const date& d);
 
