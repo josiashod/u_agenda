@@ -45,10 +45,12 @@ void UAgenda::loadData()
     d_rdvs = new LRdv();
 
     std::ifstream c_ifs("U_AGENDACONTACT.log");
-    d_contacts->load(c_ifs);
+    if(c_ifs)
+        d_contacts->load(c_ifs);
 
     std::ifstream e_ifs("U_AGENDAEVENT.log");
-    d_rdvs->load(e_ifs);
+    if(e_ifs)
+        d_rdvs->load(e_ifs);
 
     c_ifs.close();
     e_ifs.close();
